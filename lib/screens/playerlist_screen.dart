@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kcc_management_software/widgets/button_widget.dart';
+import 'package:kcc_management_software/widgets/drawer_widget.dart';
 import 'package:kcc_management_software/widgets/text_widget.dart';
 import 'package:kcc_management_software/widgets/textfield_widget.dart';
 
@@ -23,6 +24,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: const DrawerWidget(),
       body: Stack(
         children: [
           Column(
@@ -59,11 +61,18 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                         color: Colors.grey,
                       ),
                     ),
-                    const Icon(
-                      Icons.menu_rounded,
-                      color: Colors.grey,
-                      size: 42,
-                    ),
+                    Builder(builder: (context) {
+                      return GestureDetector(
+                        onTap: () async {
+                          Scaffold.of(context).openEndDrawer();
+                        },
+                        child: const Icon(
+                          Icons.menu_rounded,
+                          color: Colors.grey,
+                          size: 42,
+                        ),
+                      );
+                    }),
                   ],
                 ),
                 const SizedBox(
