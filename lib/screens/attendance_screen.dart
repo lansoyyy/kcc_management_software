@@ -4,14 +4,14 @@ import 'package:kcc_management_software/widgets/drawer_widget.dart';
 import 'package:kcc_management_software/widgets/text_widget.dart';
 import 'package:kcc_management_software/widgets/textfield_widget.dart';
 
-class PlayerListScreen extends StatefulWidget {
-  const PlayerListScreen({super.key});
+class AttendanceScreen extends StatefulWidget {
+  const AttendanceScreen({super.key});
 
   @override
-  State<PlayerListScreen> createState() => _PlayerListScreenState();
+  State<AttendanceScreen> createState() => _AttendanceScreenState();
 }
 
-class _PlayerListScreenState extends State<PlayerListScreen> {
+class _AttendanceScreenState extends State<AttendanceScreen> {
   String nameSearched = '';
   final searchController = TextEditingController();
   final firstnameController = TextEditingController();
@@ -20,9 +20,6 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
   final birthdateController = TextEditingController();
   final statusController = TextEditingController();
   final addressController = TextEditingController();
-
-  int dropValue = 0;
-  String filter = 'Active';
 
   @override
   Widget build(BuildContext context) {
@@ -58,10 +55,20 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 100),
-                      child: TextBold(
-                        text: 'PLAYER LIST',
-                        fontSize: 24,
-                        color: Colors.grey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          TextBold(
+                            text: 'ATTENDANCE',
+                            fontSize: 24,
+                            color: Colors.grey,
+                          ),
+                          TextRegular(
+                            text: 'August 30, 2023',
+                            fontSize: 16,
+                            color: Colors.grey,
+                          ),
+                        ],
                       ),
                     ),
                     Builder(builder: (context) {
@@ -124,20 +131,6 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                       width: 125,
                       fontSize: 10,
                       color: Colors.grey[300],
-                      label: 'ADD MEMBER',
-                      onPressed: () {
-                        addMemberDialog();
-                      },
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    ButtonWidget(
-                      height: 40,
-                      radius: 10,
-                      width: 125,
-                      fontSize: 10,
-                      color: Colors.grey[300],
                       label: 'EXPORT CSV',
                       onPressed: () {},
                     ),
@@ -146,72 +139,8 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey,
-                          ),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        child: SizedBox(
-                          height: 40,
-                          child: DropdownButton(
-                            underline: const SizedBox(),
-                            value: dropValue,
-                            items: [
-                              DropdownMenuItem(
-                                onTap: () {
-                                  setState(() {
-                                    filter = 'Active';
-                                  });
-                                },
-                                value: 0,
-                                child: TextRegular(
-                                  text: 'Active Players',
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              DropdownMenuItem(
-                                onTap: () {
-                                  setState(() {
-                                    filter = 'Flagged';
-                                  });
-                                },
-                                value: 1,
-                                child: TextRegular(
-                                  text: 'Flagged Players',
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                            onChanged: (value) {
-                              setState(() {
-                                dropValue = int.parse(value.toString());
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                    TextBold(
-                      text: 'August 30, 2023',
-                      fontSize: 14,
-                      color: Colors.black,
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
                 Container(
-                  height: 550,
+                  height: 600,
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
                     border: Border.all(
@@ -224,12 +153,11 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                       child: ListView.separated(
                           itemBuilder: (context, index) {
                             return ListTile(
-                              leading: IconButton(
-                                onPressed: () {
-                                  addMemberDialog();
-                                },
-                                icon: const Icon(
-                                  Icons.edit_outlined,
+                              leading: Padding(
+                                padding: const EdgeInsets.only(left: 20),
+                                child: TextRegular(
+                                  text: '2020300',
+                                  fontSize: 18,
                                   color: Colors.grey,
                                 ),
                               ),
@@ -244,55 +172,13 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                               trailing: SizedBox(
                                 width: 75,
                                 child: Row(
-                                  children: [
-                                    const Icon(
+                                  children: const [
+                                    Icon(
                                       Icons.circle,
                                       color: Colors.white,
                                     ),
-                                    const SizedBox(
+                                    SizedBox(
                                       width: 20,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              title: TextBold(
-                                                  text: 'Attendance',
-                                                  fontSize: 16,
-                                                  color: Colors.black),
-                                              content: TextRegular(
-                                                  text:
-                                                      'Mark John Doe as present?',
-                                                  fontSize: 14,
-                                                  color: Colors.grey),
-                                              actions: [
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: TextRegular(
-                                                        text: 'Close',
-                                                        fontSize: 14,
-                                                        color: Colors.grey)),
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: TextRegular(
-                                                        text: 'Continue',
-                                                        fontSize: 14,
-                                                        color: Colors.black))
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                      child: const Icon(
-                                        Icons.check_box_outline_blank_outlined,
-                                        color: Colors.grey,
-                                      ),
                                     ),
                                   ],
                                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kcc_management_software/screens/attendance_screen.dart';
 import 'package:kcc_management_software/screens/playerlist_screen.dart';
 import 'package:kcc_management_software/widgets/text_widget.dart';
 
@@ -28,7 +29,7 @@ class DrawerWidget extends StatelessWidget {
           ListTile(
             onTap: () {
               Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => const PlayerListScreen()));
+                  builder: (context) => const AttendanceScreen()));
             },
             leading: const Icon(Icons.calendar_month_outlined),
             title: TextRegular(
