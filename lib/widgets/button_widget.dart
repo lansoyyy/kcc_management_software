@@ -9,6 +9,7 @@ class ButtonWidget extends StatelessWidget {
   final double? height;
   final double? radius;
   final Color? color;
+  final Color? fontColor;
 
   const ButtonWidget(
       {super.key,
@@ -18,7 +19,8 @@ class ButtonWidget extends StatelessWidget {
       this.fontSize = 18,
       this.height = 50,
       this.radius = 5,
-      this.color = Colors.blue});
+      this.color = Colors.blue,
+      this.fontColor = Colors.black});
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
@@ -29,6 +31,6 @@ class ButtonWidget extends StatelessWidget {
         height: height,
         color: color,
         onPressed: onPressed,
-        child: TextBold(text: label, fontSize: fontSize!, color: Colors.black));
+        child: TextBold(text: label, fontSize: fontSize!, color: fontColor!));
   }
 }
