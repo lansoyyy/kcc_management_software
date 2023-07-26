@@ -174,9 +174,61 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                   color: Colors.grey,
                                 ),
                               ),
-                              trailing: const Icon(
-                                Icons.circle,
-                                color: Colors.white,
+                              trailing: SizedBox(
+                                width: 75,
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.circle,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: TextBold(
+                                                  text: 'Attendance',
+                                                  fontSize: 16,
+                                                  color: Colors.black),
+                                              content: TextRegular(
+                                                  text:
+                                                      'Mark John Doe as present?',
+                                                  fontSize: 14,
+                                                  color: Colors.grey),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: TextRegular(
+                                                        text: 'Close',
+                                                        fontSize: 14,
+                                                        color: Colors.grey)),
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: TextRegular(
+                                                        text: 'Continue',
+                                                        fontSize: 14,
+                                                        color: Colors.black))
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: const Icon(
+                                        Icons.check_box_outline_blank_outlined,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           },
