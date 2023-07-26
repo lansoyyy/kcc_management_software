@@ -40,7 +40,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(30, 50, 30, 50),
+            padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
             child: Column(
               children: [
                 Row(
@@ -135,7 +135,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                   height: 10,
                 ),
                 Container(
-                  height: 550,
+                  height: 600,
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
                     border: Border.all(
