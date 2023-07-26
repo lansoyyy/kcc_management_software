@@ -22,12 +22,13 @@ class ButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
+        elevation: 3,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radius!)),
         minWidth: width,
         height: height,
         color: color,
         onPressed: onPressed,
-        child: TextBold(text: label, fontSize: fontSize!, color: Colors.white));
+        child: TextBold(text: label, fontSize: fontSize!, color: Colors.black));
   }
 }
