@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kcc_management_software/services/add_member.dart';
 import 'package:kcc_management_software/widgets/button_widget.dart';
 import 'package:kcc_management_software/widgets/drawer_widget.dart';
 import 'package:kcc_management_software/widgets/text_widget.dart';
@@ -202,7 +203,8 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                       ),
                     ),
                     TextBold(
-                      text: 'August 30, 2023',
+                      text:
+                          '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}',
                       fontSize: 14,
                       color: Colors.black,
                     ),
@@ -406,7 +408,8 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                 ],
                               ),
                               TextRegular(
-                                text: 'REGISTRATION DATE: 08/30/2023',
+                                text:
+                                    'REGISTRATION DATE: ${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}',
                                 fontSize: 12,
                                 color: Colors.grey,
                               ),
@@ -538,6 +541,14 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                         label: 'ADD USER',
                         onPressed: () {
                           if (_validateFields()) {
+                            addMember(
+                                firstnameController.text,
+                                lastnameController.text,
+                                middlenameController.text,
+                                birthdateController.text,
+                                statusController.text,
+                                addressController.text,
+                                '12345');
                             Navigator.pop(context);
                           }
                         },

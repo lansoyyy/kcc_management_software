@@ -64,7 +64,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                             color: Colors.grey,
                           ),
                           TextRegular(
-                            text: 'August 30, 2023',
+                            text:
+                                '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}',
                             fontSize: 16,
                             color: Colors.grey,
                           ),
