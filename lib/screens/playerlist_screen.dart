@@ -373,7 +373,9 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             fontSize: 10,
                             color: Colors.grey[300],
                             label: 'UPLOAD',
-                            onPressed: () {},
+                            onPressed: () {
+                              uploadPicture();
+                            },
                           ),
                         ],
                       ),
