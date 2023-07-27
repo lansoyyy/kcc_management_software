@@ -1,3 +1,6 @@
+import 'dart:html';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:kcc_management_software/services/add_member.dart';
 import 'package:kcc_management_software/widgets/button_widget.dart';
@@ -548,7 +551,8 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                 birthdateController.text,
                                 statusController.text,
                                 addressController.text,
-                                '12345');
+                                '12345',
+                                imgUrl);
                             Navigator.pop(context);
                           }
                         },
@@ -562,6 +566,33 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
         );
       },
     );
+  }
+
+  String imgUrl = '';
+
+  uploadPicture() {
+    InputElement input = FileUploadInputElement() as InputElement
+      ..accept = 'image/*';
+    FirebaseStorage fs = FirebaseStorage.instance;
+    input.click();
+    input.onChange.listen((event) {
+      final file = input.files!.first;
+      final reader = FileReader();
+      reader.readAsDataUrl(file);
+      reader.onLoadEnd.listen((event) async {
+        var snapshot = await fs.ref().child('newfile').putBlob(file);
+        String downloadUrl = await snapshot.ref.getDownloadURL();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: TextRegular(
+                text: 'Photo Uploaded Succesfully!',
+                fontSize: 14,
+                color: Colors.white)));
+
+        setState(() {
+          imgUrl = downloadUrl;
+        });
+      });
+    });
   }
 
   _validateFields() {
@@ -585,6 +616,10 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
     }
     if (addressController.text == "") {
       errMsg = "Address is required.";
+    }
+
+    if (imgUrl == '') {
+      errMsg = "Member Photo is required.";
     }
 
     if (errMsg != "") {
