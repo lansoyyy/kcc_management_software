@@ -3,6 +3,7 @@ import 'package:kcc_management_software/widgets/button_widget.dart';
 import 'package:kcc_management_software/widgets/drawer_widget.dart';
 import 'package:kcc_management_software/widgets/text_widget.dart';
 import 'package:kcc_management_software/widgets/textfield_widget.dart';
+import 'package:kcc_management_software/widgets/toast_widget.dart';
 
 class PlayerListScreen extends StatefulWidget {
   const PlayerListScreen({super.key});
@@ -449,7 +450,43 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             fontSize: 10,
                             color: Colors.red[300],
                             label: 'DELETE USER',
-                            onPressed: () {},
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: TextBold(
+                                        text: 'Delete Confirmation',
+                                        fontSize: 16,
+                                        color: Colors.black),
+                                    content: TextRegular(
+                                        text:
+                                            'Are you sure you want to delete this user?',
+                                        fontSize: 14,
+                                        color: Colors.grey),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: TextRegular(
+                                              text: 'Close',
+                                              fontSize: 14,
+                                              color: Colors.grey)),
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                          },
+                                          child: TextRegular(
+                                              text: 'Continue',
+                                              fontSize: 14,
+                                              color: Colors.black))
+                                    ],
+                                  );
+                                },
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -499,7 +536,11 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                         fontSize: 10,
                         color: Colors.blue,
                         label: 'ADD USER',
-                        onPressed: () {},
+                        onPressed: () {
+                          if (_validateFields()) {
+                            Navigator.pop(context);
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -510,5 +551,39 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
         );
       },
     );
+  }
+
+  _validateFields() {
+    var errMsg = "";
+
+    if (firstnameController.text == "") {
+      errMsg = "First Name is required.";
+    }
+    if (lastnameController.text == "") {
+      errMsg = "Last Name is required.";
+    }
+
+    if (middlenameController.text == "") {
+      errMsg = "Middle Name is required.";
+    }
+    if (birthdateController.text == "") {
+      errMsg = "Birth Date is required.";
+    }
+    if (statusController.text == "") {
+      errMsg = "Status is required.";
+    }
+    if (addressController.text == "") {
+      errMsg = "Address is required.";
+    }
+
+    if (errMsg != "") {
+      Navigator.pop(context);
+
+      showToast(errMsg);
+
+      return false;
+    } else {
+      return true;
+    }
   }
 }
