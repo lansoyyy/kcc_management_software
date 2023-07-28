@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'dart:math';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -546,6 +547,9 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                         label: 'ADD USER',
                         onPressed: () {
                           if (_validateFields()) {
+                            Random random = Random();
+                            int idNumber = random.nextInt(1000000);
+
                             addMember(
                                 firstnameController.text,
                                 lastnameController.text,
@@ -553,7 +557,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                 birthdateController.text,
                                 statusController.text,
                                 addressController.text,
-                                '12345',
+                                idNumber.toString(),
                                 imgUrl);
                             Navigator.pop(context);
                           }
