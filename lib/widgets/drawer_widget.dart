@@ -14,6 +14,14 @@ class DrawerWidget extends StatelessWidget {
           const SizedBox(
             height: 50,
           ),
+          Container(
+            height: 50,
+            width: 150,
+            color: Colors.black,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
           ListTile(
             onTap: () {
               Navigator.of(context).pushReplacement(MaterialPageRoute(
