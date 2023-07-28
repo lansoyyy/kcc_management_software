@@ -1,8 +1,10 @@
 import 'dart:html';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:kcc_management_software/services/add_attendance.dart';
 import 'package:kcc_management_software/services/add_member.dart';
 import 'package:kcc_management_software/widgets/button_widget.dart';
 import 'package:kcc_management_software/widgets/drawer_widget.dart';
@@ -28,7 +30,8 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
   final addressController = TextEditingController();
 
   int dropValue = 0;
-  String filter = 'Active';
+
+  bool filter = true;
 
   @override
   Widget build(BuildContext context) {
@@ -173,7 +176,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                               DropdownMenuItem(
                                 onTap: () {
                                   setState(() {
-                                    filter = 'Active';
+                                    filter = true;
                                   });
                                 },
                                 value: 0,
@@ -186,7 +189,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                               DropdownMenuItem(
                                 onTap: () {
                                   setState(() {
-                                    filter = 'Flagged';
+                                    filter = false;
                                   });
                                 },
                                 value: 1,
@@ -226,94 +229,219 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                       color: Colors.grey,
                     ),
                   ),
-                  child: Expanded(
-                    child: SizedBox(
-                      child: ListView.separated(
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              leading: IconButton(
-                                onPressed: () {
-                                  addMemberDialog();
-                                },
-                                icon: const Icon(
-                                  Icons.edit_outlined,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              title: Padding(
-                                padding: const EdgeInsets.only(left: 30),
-                                child: TextRegular(
-                                  text: 'John C. Doe',
-                                  fontSize: 18,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              trailing: SizedBox(
-                                width: 75,
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.circle,
-                                      color: Colors.white,
-                                    ),
-                                    const SizedBox(
-                                      width: 20,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              title: TextBold(
-                                                  text: 'Attendance',
-                                                  fontSize: 16,
-                                                  color: Colors.black),
-                                              content: TextRegular(
-                                                  text:
-                                                      'Mark John Doe as present?',
-                                                  fontSize: 14,
-                                                  color: Colors.grey),
-                                              actions: [
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: TextRegular(
-                                                        text: 'Close',
-                                                        fontSize: 14,
-                                                        color: Colors.grey)),
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: TextRegular(
-                                                        text: 'Continue',
-                                                        fontSize: 14,
-                                                        color: Colors.black))
-                                              ],
-                                            );
-                                          },
-                                        );
+                  child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('Members')
+                          .where('isActive', isEqualTo: filter)
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          print(snapshot.error);
+                          return const Center(child: Text('Error'));
+                        }
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Padding(
+                            padding: EdgeInsets.only(top: 50),
+                            child: Center(
+                                child: CircularProgressIndicator(
+                              color: Colors.black,
+                            )),
+                          );
+                        }
+
+                        final data = snapshot.requireData;
+                        return Expanded(
+                          child: SizedBox(
+                            child: ListView.separated(
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    leading: IconButton(
+                                      onPressed: () {
+                                        addMemberDialog();
                                       },
-                                      child: const Icon(
-                                        Icons.check_box_outline_blank_outlined,
+                                      icon: const Icon(
+                                        Icons.edit_outlined,
                                         color: Colors.grey,
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return const Divider(
-                              color: Colors.grey,
-                            );
-                          },
-                          itemCount: 100),
-                    ),
-                  ),
+                                    title: Padding(
+                                      padding: const EdgeInsets.only(left: 30),
+                                      child: TextRegular(
+                                        text:
+                                            '${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}',
+                                        fontSize: 18,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    trailing: SizedBox(
+                                      width: 75,
+                                      child: Row(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    title: TextBold(
+                                                        text: data.docs[index]
+                                                                ['isActive']
+                                                            ? 'Flag user confirmation'
+                                                            : 'Unflag user confirmation',
+                                                        fontSize: 16,
+                                                        color: Colors.black),
+                                                    content: TextRegular(
+                                                        text: data.docs[index]
+                                                                ['isActive']
+                                                            ? 'Are you sure you want to flag ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}?'
+                                                            : 'Are you sure you want to unflag ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}?',
+                                                        fontSize: 14,
+                                                        color: Colors.grey),
+                                                    actions: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: TextRegular(
+                                                              text: 'Close',
+                                                              fontSize: 14,
+                                                              color:
+                                                                  Colors.grey)),
+                                                      TextButton(
+                                                          onPressed: () async {
+                                                            if (data.docs[index]
+                                                                ['isActive']) {
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'Members')
+                                                                  .doc(data
+                                                                      .docs[
+                                                                          index]
+                                                                      .id)
+                                                                  .update({
+                                                                'isActive':
+                                                                    false
+                                                              });
+                                                            } else {
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'Members')
+                                                                  .doc(data
+                                                                      .docs[
+                                                                          index]
+                                                                      .id)
+                                                                  .update({
+                                                                'isActive': true
+                                                              });
+                                                            }
+
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: TextRegular(
+                                                              text: 'Continue',
+                                                              fontSize: 14,
+                                                              color:
+                                                                  Colors.black))
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Icon(
+                                              Icons.circle,
+                                              color: data.docs[index]
+                                                      ['isActive']
+                                                  ? Colors.white
+                                                  : Colors.red,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 20,
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    title: TextBold(
+                                                        text: 'Attendance',
+                                                        fontSize: 16,
+                                                        color: Colors.black),
+                                                    content: TextRegular(
+                                                        text:
+                                                            'Mark ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']} as present?',
+                                                        fontSize: 14,
+                                                        color: Colors.grey),
+                                                    actions: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: TextRegular(
+                                                              text: 'Close',
+                                                              fontSize: 14,
+                                                              color:
+                                                                  Colors.grey)),
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            addAttendance(
+                                                                data.docs[index]
+                                                                    [
+                                                                    'firstName'],
+                                                                data.docs[index]
+                                                                    [
+                                                                    'lastName'],
+                                                                data.docs[index]
+                                                                    [
+                                                                    'middleInitial'],
+                                                                data.docs[index]
+                                                                    .id,
+                                                                data.docs[index]
+                                                                    ['photo'],
+                                                                data.docs[index]
+                                                                    [
+                                                                    'isActive']);
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: TextRegular(
+                                                              text: 'Continue',
+                                                              fontSize: 14,
+                                                              color:
+                                                                  Colors.black))
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: const Icon(
+                                              Icons
+                                                  .check_box_outline_blank_outlined,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                separatorBuilder: (context, index) {
+                                  return const Divider(
+                                    color: Colors.grey,
+                                  );
+                                },
+                                itemCount: data.docs.length),
+                          ),
+                        );
+                      }),
                 ),
               ],
             ),
