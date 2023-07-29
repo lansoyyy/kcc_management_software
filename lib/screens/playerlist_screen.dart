@@ -373,70 +373,87 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                           const SizedBox(
                                             width: 20,
                                           ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                    title: TextBold(
-                                                        text: 'Attendance',
-                                                        fontSize: 16,
-                                                        color: Colors.black),
-                                                    content: TextRegular(
-                                                        text:
-                                                            'Mark ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']} as present?',
-                                                        fontSize: 14,
-                                                        color: Colors.grey),
-                                                    actions: [
-                                                      TextButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child: TextRegular(
-                                                              text: 'Close',
+                                          data.docs[index]['isActive']
+                                              ? GestureDetector(
+                                                  onTap: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                          title: TextBold(
+                                                              text:
+                                                                  'Attendance',
+                                                              fontSize: 16,
+                                                              color:
+                                                                  Colors.black),
+                                                          content: TextRegular(
+                                                              text:
+                                                                  'Mark ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']} as present?',
                                                               fontSize: 14,
                                                               color:
-                                                                  Colors.grey)),
-                                                      TextButton(
-                                                          onPressed: () {
-                                                            addAttendance(
-                                                                data.docs[index]
-                                                                    [
-                                                                    'firstName'],
-                                                                data.docs[index]
-                                                                    [
-                                                                    'lastName'],
-                                                                data.docs[index]
-                                                                    [
-                                                                    'middleInitial'],
-                                                                data.docs[index]
-                                                                    .id,
-                                                                data.docs[index]
-                                                                    ['photo'],
-                                                                data.docs[index]
-                                                                    [
-                                                                    'isActive']);
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child: TextRegular(
-                                                              text: 'Continue',
-                                                              fontSize: 14,
-                                                              color:
-                                                                  Colors.black))
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            child: const Icon(
-                                              Icons
-                                                  .check_box_outline_blank_outlined,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
+                                                                  Colors.grey),
+                                                          actions: [
+                                                            TextButton(
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                                child: TextRegular(
+                                                                    text:
+                                                                        'Close',
+                                                                    fontSize:
+                                                                        14,
+                                                                    color: Colors
+                                                                        .grey)),
+                                                            TextButton(
+                                                                onPressed: () {
+                                                                  addAttendance(
+                                                                      data.docs[
+                                                                              index]
+                                                                          [
+                                                                          'firstName'],
+                                                                      data.docs[
+                                                                              index]
+                                                                          [
+                                                                          'lastName'],
+                                                                      data.docs[
+                                                                              index]
+                                                                          [
+                                                                          'middleInitial'],
+                                                                      data
+                                                                          .docs[
+                                                                              index]
+                                                                          .id,
+                                                                      data.docs[
+                                                                              index]
+                                                                          [
+                                                                          'photo'],
+                                                                      data.docs[
+                                                                              index]
+                                                                          [
+                                                                          'isActive']);
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                                child: TextRegular(
+                                                                    text:
+                                                                        'Continue',
+                                                                    fontSize:
+                                                                        14,
+                                                                    color: Colors
+                                                                        .black))
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                  child: const Icon(
+                                                    Icons
+                                                        .check_box_outline_blank_outlined,
+                                                    color: Colors.grey,
+                                                  ),
+                                                )
+                                              : const SizedBox()
                                         ],
                                       ),
                                     ),
