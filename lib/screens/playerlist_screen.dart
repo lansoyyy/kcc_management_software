@@ -33,8 +33,11 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
 
   bool filter = true;
 
+  bool isUploaded = false;
+
   @override
   Widget build(BuildContext context) {
+    print(imgUrl);
     return Scaffold(
       endDrawer: const DrawerWidget(),
       body: Stack(
@@ -135,7 +138,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                       color: Colors.grey[300],
                       label: 'ADD MEMBER',
                       onPressed: () {
-                        addMemberDialog();
+                        addMemberDialog(false, {});
                       },
                     ),
                     const SizedBox(
@@ -259,7 +262,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                   return ListTile(
                                     leading: IconButton(
                                       onPressed: () {
-                                        addMemberDialog();
+                                        addMemberDialog(true, data.docs[index]);
                                       },
                                       icon: const Icon(
                                         Icons.edit_outlined,
@@ -451,283 +454,352 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
     );
   }
 
-  addMemberDialog() {
+  addMemberDialog(bool inEdit, data) {
+    if (inEdit) {
+      setState(() {
+        firstnameController.text = data['firstName'];
+        lastnameController.text = data['lastName'];
+        middlenameController.text = data['middleInitial'];
+        birthdateController.text = data['brithdate'];
+        statusController.text = data['status'];
+        addressController.text = data['address'];
+
+        imgUrl = data['photo'];
+      });
+    }
     showDialog(
       context: context,
       builder: (context) {
         return Dialog(
-          child: SizedBox(
-            width: 430,
-            height: 550,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.close,
+          child: StatefulBuilder(builder: (context, setState) {
+            return SizedBox(
+              width: 430,
+              height: 550,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(
+                          Icons.close,
+                        ),
                       ),
                     ),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: 175,
-                            width: 150,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(10),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            isUploaded || inEdit
+                                ? Container(
+                                    height: 175,
+                                    width: 150,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: NetworkImage(
+                                            imgUrl,
+                                          ),
+                                          fit: BoxFit.cover),
+                                      border: Border.all(
+                                        color: Colors.grey,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  )
+                                : Container(
+                                    height: 175,
+                                    width: 150,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.grey,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                            const SizedBox(
+                              height: 10,
                             ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          ButtonWidget(
-                            height: 40,
-                            radius: 10,
-                            width: 125,
-                            fontSize: 10,
-                            color: Colors.grey[300],
-                            label: 'UPLOAD',
-                            onPressed: () {
-                              uploadPicture();
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Column(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  TextBold(
-                                    text: 'ID NUMBER',
-                                    fontSize: 18,
-                                    color: Colors.grey,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  TextRegular(
-                                    text: '124567',
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  const Icon(
-                                    Icons.circle,
-                                    color: Colors.red,
-                                  ),
-                                ],
-                              ),
-                              TextRegular(
-                                text:
-                                    'REGISTRATION DATE: ${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}',
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  TextFieldWidget(
-                                      width: 150,
-                                      height: 35,
-                                      label: 'FIRST NAME',
-                                      controller: firstnameController),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  TextFieldWidget(
-                                      width: 50,
-                                      height: 35,
-                                      label: 'MI',
-                                      controller: middlenameController),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              TextFieldWidget(
-                                  width: 217,
-                                  height: 35,
-                                  label: 'LAST NAME',
-                                  controller: lastnameController),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          ButtonWidget(
-                            height: 35,
-                            radius: 0,
-                            width: 217,
-                            fontSize: 10,
-                            color: Colors.red[300],
-                            label: 'DELETE USER',
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: TextBold(
-                                        text: 'Delete Confirmation',
-                                        fontSize: 16,
-                                        color: Colors.black),
-                                    content: TextRegular(
-                                        text:
-                                            'Are you sure you want to delete this user?',
-                                        fontSize: 14,
-                                        color: Colors.grey),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: TextRegular(
-                                              text: 'Close',
-                                              fontSize: 14,
-                                              color: Colors.grey)),
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
-                                          },
-                                          child: TextRegular(
-                                              text: 'Continue',
-                                              fontSize: 14,
-                                              color: Colors.black))
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          TextFieldWidget(
-                              width: 175,
-                              height: 35,
-                              label: 'BIRTHDATE',
-                              controller: birthdateController),
-                          const SizedBox(
-                            width: 15,
-                          ),
-                          TextFieldWidget(
-                              width: 175,
-                              height: 35,
-                              label: 'STATUS',
-                              controller: statusController),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextFieldWidget(
-                          maxLine: 5,
-                          width: 365,
-                          height: 100,
-                          label: 'ADDRESS',
-                          controller: addressController),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      ButtonWidget(
-                        fontColor: Colors.white,
-                        height: 45,
-                        radius: 0,
-                        width: 275,
-                        fontSize: 10,
-                        color: Colors.blue,
-                        label: 'ADD USER',
-                        onPressed: () {
-                          if (_validateFields()) {
-                            Random random = Random();
-                            int idNumber = random.nextInt(1000000);
+                            ButtonWidget(
+                              height: 40,
+                              radius: 10,
+                              width: 125,
+                              fontSize: 10,
+                              color: Colors.grey[300],
+                              label: 'UPLOAD',
+                              onPressed: () {
+                                InputElement input = FileUploadInputElement()
+                                    as InputElement
+                                  ..accept = 'image/*';
+                                FirebaseStorage fs = FirebaseStorage.instance;
+                                input.click();
+                                input.onChange.listen((event) {
+                                  final file = input.files!.first;
+                                  final reader = FileReader();
+                                  reader.readAsDataUrl(file);
+                                  reader.onLoadEnd.listen((event) async {
+                                    var snapshot = await fs
+                                        .ref()
+                                        .child('newfile')
+                                        .putBlob(file);
+                                    String downloadUrl =
+                                        await snapshot.ref.getDownloadURL();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: TextRegular(
+                                                text:
+                                                    'Photo Uploaded Succesfully!',
+                                                fontSize: 14,
+                                                color: Colors.white)));
 
-                            addMember(
-                                firstnameController.text,
-                                lastnameController.text,
-                                middlenameController.text,
-                                birthdateController.text,
-                                statusController.text,
-                                addressController.text,
-                                idNumber.toString(),
-                                imgUrl);
-                            Navigator.pop(context);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+                                    setState(() {
+                                      imgUrl = downloadUrl;
+
+                                      isUploaded = true;
+                                    });
+                                  });
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    TextBold(
+                                      text: 'ID NUMBER',
+                                      fontSize: 18,
+                                      color: Colors.grey,
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    TextRegular(
+                                      text: inEdit ? data.id : '',
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    Icon(
+                                      Icons.circle,
+                                      color: inEdit
+                                          ? data['isActive']
+                                              ? Colors.blue
+                                              : Colors.red
+                                          : Colors.white,
+                                    ),
+                                  ],
+                                ),
+                                TextRegular(
+                                  text:
+                                      'REGISTRATION DATE: ${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}',
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    TextFieldWidget(
+                                        width: 150,
+                                        height: 35,
+                                        label: 'FIRST NAME',
+                                        controller: firstnameController),
+                                    const SizedBox(
+                                      width: 15,
+                                    ),
+                                    TextFieldWidget(
+                                        isPassword: false,
+                                        padding: 2.5,
+                                        width: 50,
+                                        height: 35,
+                                        label: 'MI',
+                                        controller: middlenameController),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                TextFieldWidget(
+                                    width: 217,
+                                    height: 35,
+                                    label: 'LAST NAME',
+                                    controller: lastnameController),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            ButtonWidget(
+                              height: 35,
+                              radius: 0,
+                              width: 217,
+                              fontSize: 10,
+                              color: Colors.red[300],
+                              label: 'DELETE USER',
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: TextBold(
+                                          text: 'Delete Confirmation',
+                                          fontSize: 16,
+                                          color: Colors.black),
+                                      content: TextRegular(
+                                          text:
+                                              'Are you sure you want to delete this user?',
+                                          fontSize: 14,
+                                          color: Colors.grey),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: TextRegular(
+                                                text: 'Close',
+                                                fontSize: 14,
+                                                color: Colors.grey)),
+                                        TextButton(
+                                            onPressed: () async {
+                                              await FirebaseFirestore.instance
+                                                  .collection('Members')
+                                                  .doc(data.id)
+                                                  .delete();
+
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                            },
+                                            child: TextRegular(
+                                                text: 'Continue',
+                                                fontSize: 14,
+                                                color: Colors.black))
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextFieldWidget(
+                                width: 175,
+                                height: 35,
+                                label: 'BIRTHDATE',
+                                controller: birthdateController),
+                            const SizedBox(
+                              width: 15,
+                            ),
+                            TextFieldWidget(
+                                width: 175,
+                                height: 35,
+                                label: 'STATUS',
+                                controller: statusController),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        TextFieldWidget(
+                            maxLine: 5,
+                            width: 365,
+                            height: 100,
+                            label: 'ADDRESS',
+                            controller: addressController),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        ButtonWidget(
+                          fontColor: Colors.white,
+                          height: 45,
+                          radius: 0,
+                          width: 275,
+                          fontSize: 10,
+                          color: Colors.blue,
+                          label: inEdit ? 'EDIT' : 'ADD USER',
+                          onPressed: () async {
+                            if (_validateFields()) {
+                              if (inEdit) {
+                                await FirebaseFirestore.instance
+                                    .collection('Members')
+                                    .doc(data.id)
+                                    .update({
+                                  'firstName': firstnameController.text,
+                                  'lastName': lastnameController.text,
+                                  'middleInitial': middlenameController.text,
+                                  'brithdate': birthdateController.text,
+                                  'status': statusController.text,
+                                  'address': addressController.text,
+                                  'id': data.id,
+                                  'photo': imgUrl,
+                                });
+                              } else {
+                                Random random = Random();
+                                int idNumber = random.nextInt(1000000);
+
+                                addMember(
+                                    firstnameController.text,
+                                    lastnameController.text,
+                                    middlenameController.text,
+                                    birthdateController.text,
+                                    statusController.text,
+                                    addressController.text,
+                                    idNumber.toString(),
+                                    imgUrl);
+                              }
+
+                              firstnameController.clear();
+                              lastnameController.clear();
+                              middlenameController.clear();
+                              birthdateController.clear();
+                              statusController.clear();
+                              addressController.clear();
+                              Navigator.pop(context);
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
+            );
+          }),
         );
       },
     );
   }
 
   String imgUrl = '';
-
-  uploadPicture() {
-    InputElement input = FileUploadInputElement() as InputElement
-      ..accept = 'image/*';
-    FirebaseStorage fs = FirebaseStorage.instance;
-    input.click();
-    input.onChange.listen((event) {
-      final file = input.files!.first;
-      final reader = FileReader();
-      reader.readAsDataUrl(file);
-      reader.onLoadEnd.listen((event) async {
-        var snapshot = await fs.ref().child('newfile').putBlob(file);
-        String downloadUrl = await snapshot.ref.getDownloadURL();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: TextRegular(
-                text: 'Photo Uploaded Succesfully!',
-                fontSize: 14,
-                color: Colors.white)));
-
-        setState(() {
-          imgUrl = downloadUrl;
-        });
-      });
-    });
-  }
 
   _validateFields() {
     var errMsg = "";

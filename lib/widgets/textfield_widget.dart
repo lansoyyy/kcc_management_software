@@ -12,6 +12,7 @@ class TextFieldWidget extends StatefulWidget {
   final TextInputType? inputType;
   final bool? isPassword;
   final bool? isEmail;
+  final double? padding;
 
   TextFieldWidget(
       {super.key,
@@ -24,6 +25,7 @@ class TextFieldWidget extends StatefulWidget {
       this.maxLine = 1,
       this.isPassword = false,
       this.isEmail = false,
+      this.padding = 10,
       this.inputType = TextInputType.text});
 
   @override
@@ -49,7 +51,8 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
               ),
               borderRadius: BorderRadius.circular(0)),
           child: Padding(
-            padding: const EdgeInsets.only(left: 10, right: 10),
+            padding:
+                EdgeInsets.only(left: widget.padding!, right: widget.padding!),
             child: TextFormField(
               textCapitalization: widget.isEmail! && widget.isPassword!
                   ? TextCapitalization.none
@@ -67,7 +70,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                             ? const Icon(Icons.remove_red_eye)
                             : const Icon(Icons.visibility_off),
                       )
-                    : const SizedBox(),
+                    : null,
                 hintText: widget.hint,
                 border: InputBorder.none,
               ),
