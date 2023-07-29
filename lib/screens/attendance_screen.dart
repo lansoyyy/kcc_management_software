@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kcc_management_software/widgets/button_widget.dart';
 import 'package:kcc_management_software/widgets/drawer_widget.dart';
 import 'package:kcc_management_software/widgets/text_widget.dart';
+import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
 
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({super.key});
@@ -152,6 +153,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   child: StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
                           .collection('Attendance')
+                          .where('firstName',
+                              isGreaterThanOrEqualTo:
+                                  toBeginningOfSentenceCase(nameSearched))
+                          .where('firstName',
+                              isLessThan:
+                                  '${toBeginningOfSentenceCase(nameSearched)}z')
                           .where('month', isEqualTo: DateTime.now().month)
                           .where('year', isEqualTo: DateTime.now().year)
                           .where('day', isEqualTo: DateTime.now().day)

@@ -1,6 +1,6 @@
 import 'dart:html';
 import 'dart:math';
-
+import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -235,6 +235,12 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                   child: StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
                           .collection('Members')
+                          .where('firstName',
+                              isGreaterThanOrEqualTo:
+                                  toBeginningOfSentenceCase(nameSearched))
+                          .where('firstName',
+                              isLessThan:
+                                  '${toBeginningOfSentenceCase(nameSearched)}z')
                           .where('isActive', isEqualTo: filter)
                           .snapshots(),
                       builder: (BuildContext context,
