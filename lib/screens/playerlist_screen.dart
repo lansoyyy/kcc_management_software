@@ -553,7 +553,21 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             imgUrl != '' || inEdit
-                                ? Image.network(imgUrl)
+                                ? Container(
+                                    height: 175,
+                                    width: 150,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: NetworkImage(
+                                            imgUrl,
+                                          ),
+                                          fit: BoxFit.cover),
+                                      border: Border.all(
+                                        color: Colors.grey,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  )
                                 : Container(
                                     height: 175,
                                     width: 150,
