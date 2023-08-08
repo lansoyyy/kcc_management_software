@@ -1,5 +1,4 @@
 import 'dart:html';
-import 'dart:math';
 import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -808,6 +807,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                           color: Colors.blue,
                           label: inEdit ? 'EDIT' : 'ADD USER',
                           onPressed: () async {
+                            int membersLength = 0;
                             if (_validateFields()) {
                               if (inEdit) {
                                 await FirebaseFirestore.instance
@@ -824,8 +824,19 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                   'photo': imgUrl,
                                 });
                               } else {
-                                Random random = Random();
-                                int idNumber = random.nextInt(1000000);
+                               await FirebaseFirestore.instance
+        .collection('Members')
+        
+        .get().then((value) {
+
+          setState(() {
+            membersLength = value.docs.length;
+          },);
+
+        });
+
+      
+                               
 
                                 addMember(
                                     firstnameController.text,
@@ -834,7 +845,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                     birthdateController.text,
                                     statusController.text,
                                     addressController.text,
-                                    idNumber.toString(),
+                                    membersLength.toString(),
                                     imgUrl);
                               }
 
