@@ -5,6 +5,8 @@ import 'package:kcc_management_software/widgets/drawer_widget.dart';
 import 'package:kcc_management_software/widgets/text_widget.dart';
 import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
 
+import '../services/add_attendance.dart';
+
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({super.key});
 
@@ -62,12 +64,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                           TextBold(
                             text: 'ATTENDANCE',
                             fontSize: 24,
-                            color: Colors.grey,
-                          ),
-                          TextRegular(
-                            text:
-                                '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}',
-                            fontSize: 16,
                             color: Colors.grey,
                           ),
                         ],
@@ -142,7 +138,149 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   height: 10,
                 ),
                 Container(
-                  height: 600,
+                  height: 275,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    border: Border.all(
+                      width: 1,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('Members')
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          print(snapshot.error);
+                          return const Center(child: Text('Error'));
+                        }
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Padding(
+                            padding: EdgeInsets.only(top: 50),
+                            child: Center(
+                                child: CircularProgressIndicator(
+                              color: Colors.black,
+                            )),
+                          );
+                        }
+
+                        final data = snapshot.requireData;
+                        return SizedBox(
+                          height: 250,
+                          child: ListView.separated(
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: TextBold(
+                                              text: 'Attendance',
+                                              fontSize: 16,
+                                              color: Colors.black),
+                                          content: TextRegular(
+                                              text:
+                                                  'Mark ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']} as present?',
+                                              fontSize: 14,
+                                              color: Colors.grey),
+                                          actions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: TextRegular(
+                                                    text: 'Close',
+                                                    fontSize: 14,
+                                                    color: Colors.grey)),
+                                            TextButton(
+                                                onPressed: () {
+                                                  addAttendance(
+                                                      data.docs[index]
+                                                          ['firstName'],
+                                                      data.docs[index]
+                                                          ['lastName'],
+                                                      data.docs[index]
+                                                          ['middleInitial'],
+                                                      data.docs[index].id,
+                                                      data.docs[index]['photo'],
+                                                      data.docs[index]
+                                                          ['isActive']);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: TextRegular(
+                                                    text: 'Continue',
+                                                    fontSize: 14,
+                                                    color: Colors.black))
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  leading: Padding(
+                                    padding: const EdgeInsets.only(left: 20),
+                                    child: TextRegular(
+                                      text: data.docs[index]['id'],
+                                      fontSize: 18,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  title: Padding(
+                                    padding: const EdgeInsets.only(left: 30),
+                                    child: TextRegular(
+                                      text:
+                                          '${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}',
+                                      fontSize: 18,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  trailing: const SizedBox(
+                                    width: 75,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.circle,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return const Divider(
+                                  color: Colors.grey,
+                                );
+                              },
+                              itemCount: data.docs.length),
+                        );
+                      }),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextBold(
+                  text: 'Active Players',
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
+                TextRegular(
+                  text:
+                      '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}',
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Container(
+                  height: 275,
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
                     border: Border.all(
@@ -181,51 +319,50 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         }
 
                         final data = snapshot.requireData;
-                        return Expanded(
-                          child: SizedBox(
-                            child: ListView.separated(
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    leading: Padding(
-                                      padding: const EdgeInsets.only(left: 20),
-                                      child: TextRegular(
-                                        text: data.docs[index]['userId'],
-                                        fontSize: 18,
-                                        color: Colors.grey,
-                                      ),
+                        return SizedBox(
+                          height: 250,
+                          child: ListView.separated(
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  leading: Padding(
+                                    padding: const EdgeInsets.only(left: 20),
+                                    child: TextRegular(
+                                      text: data.docs[index]['userId'],
+                                      fontSize: 18,
+                                      color: Colors.grey,
                                     ),
-                                    title: Padding(
-                                      padding: const EdgeInsets.only(left: 30),
-                                      child: TextRegular(
-                                        text:
-                                            '${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}',
-                                        fontSize: 18,
-                                        color: Colors.grey,
-                                      ),
+                                  ),
+                                  title: Padding(
+                                    padding: const EdgeInsets.only(left: 30),
+                                    child: TextRegular(
+                                      text:
+                                          '${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}',
+                                      fontSize: 18,
+                                      color: Colors.grey,
                                     ),
-                                    trailing: SizedBox(
-                                      width: 75,
-                                      child: Row(
-                                        children: const [
-                                          Icon(
-                                            Icons.circle,
-                                            color: Colors.white,
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                        ],
-                                      ),
+                                  ),
+                                  trailing: const SizedBox(
+                                    width: 75,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.circle,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                      ],
                                     ),
-                                  );
-                                },
-                                separatorBuilder: (context, index) {
-                                  return const Divider(
-                                    color: Colors.grey,
-                                  );
-                                },
-                                itemCount: data.docs.length),
-                          ),
+                                  ),
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return const Divider(
+                                  color: Colors.grey,
+                                );
+                              },
+                              itemCount: data.docs.length),
                         );
                       }),
                 ),
