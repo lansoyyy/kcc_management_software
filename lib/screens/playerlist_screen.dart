@@ -137,6 +137,13 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                       color: Colors.grey[300],
                       label: 'ADD MEMBER',
                       onPressed: () {
+                        firstnameController.clear();
+                        middlenameController.clear();
+                        lastnameController.clear();
+                        birthdateController.clear();
+                        statusController.clear();
+                        addressController.clear();
+
                         addMemberDialog(false, {});
                       },
                     ),
