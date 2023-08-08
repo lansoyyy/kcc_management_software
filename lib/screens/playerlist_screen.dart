@@ -1,4 +1,6 @@
 import 'dart:html';
+
+import 'package:csv/csv.dart';
 import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -9,6 +11,8 @@ import 'package:kcc_management_software/widgets/drawer_widget.dart';
 import 'package:kcc_management_software/widgets/text_widget.dart';
 import 'package:kcc_management_software/widgets/textfield_widget.dart';
 import 'package:kcc_management_software/widgets/toast_widget.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io' as io;
 
 class PlayerListScreen extends StatefulWidget {
   const PlayerListScreen({super.key});
@@ -151,11 +155,15 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                     ButtonWidget(
                       height: 40,
                       radius: 10,
-                      width: 125,
+                      width: 100,
                       fontSize: 10,
                       color: Colors.grey[300],
-                      label: 'EXPORT CSV',
-                      onPressed: () {},
+                      label: 'EXPORT',
+                      onPressed: () {
+                        exportCSV([
+                          {'employee': 'Lance Olana'}
+                        ]);
+                      },
                     ),
                   ],
                 ),
@@ -904,6 +912,33 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
       return false;
     } else {
       return true;
+    }
+  }
+
+  Future<void> exportCSV(List<Map<String, dynamic>> list) async {
+    try {
+      List<List<dynamic>> rows = [];
+      rows.add(["Employee"]);
+
+      for (var map in list) {
+        rows.add([map["employee"]]);
+      }
+
+      String csv = const ListToCsvConverter().convert(rows);
+
+      // Use getTemporaryDirectory to get the temporary directory path
+      var dir = await getDownloadsDirectory();
+      String filePath = "${dir!.path}/list.csv";
+
+      final file = await io.File(filePath)
+          .create(); // Create the file if it doesn't exist
+
+      // Write to the file using the csv data
+      await file.writeAsString(csv);
+
+      print("CSV File created at: $filePath");
+    } catch (e) {
+      print(e.toString());
     }
   }
 }

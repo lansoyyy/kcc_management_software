@@ -46,6 +46,9 @@ dependencies:
   path_provider:
   image_picker:
   firebase_storage:
+  csv:
+  permission_handler:
+  open_file:
 
 dev_dependencies:
   flutter_test:

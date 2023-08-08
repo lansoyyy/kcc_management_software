@@ -126,10 +126,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     ButtonWidget(
                       height: 40,
                       radius: 10,
-                      width: 125,
+                      width: 100,
                       fontSize: 10,
                       color: Colors.grey[300],
-                      label: 'EXPORT CSV',
+                      label: 'EXPORT',
                       onPressed: () {},
                     ),
                   ],
