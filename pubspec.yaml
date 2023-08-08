@@ -49,6 +49,7 @@ dependencies:
   csv:
   permission_handler:
   open_file:
+  printing: ^5.9.3
 
 dev_dependencies:
   flutter_test:

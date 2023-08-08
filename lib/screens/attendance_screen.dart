@@ -4,7 +4,10 @@ import 'package:kcc_management_software/widgets/button_widget.dart';
 import 'package:kcc_management_software/widgets/drawer_widget.dart';
 import 'package:kcc_management_software/widgets/text_widget.dart';
 import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
-
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import 'dart:io' as io;
 import '../services/add_attendance.dart';
 
 class AttendanceScreen extends StatefulWidget {
@@ -123,15 +126,43 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       ),
                     ),
                     const Expanded(child: SizedBox()),
-                    ButtonWidget(
-                      height: 40,
-                      radius: 10,
-                      width: 100,
-                      fontSize: 10,
-                      color: Colors.grey[300],
-                      label: 'EXPORT',
-                      onPressed: () {},
-                    ),
+                    StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('Attendance')
+                            .where('month', isEqualTo: DateTime.now().month)
+                            .where('year', isEqualTo: DateTime.now().year)
+                            .where('day', isEqualTo: DateTime.now().day)
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            print(snapshot.error);
+                            return const Center(child: Text('Error'));
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 50),
+                              child: Center(
+                                  child: CircularProgressIndicator(
+                                color: Colors.black,
+                              )),
+                            );
+                          }
+
+                          final data = snapshot.requireData;
+                          return ButtonWidget(
+                            height: 40,
+                            radius: 10,
+                            width: 100,
+                            fontSize: 10,
+                            color: Colors.grey[300],
+                            label: 'EXPORT',
+                            onPressed: () {
+                              generatePdf(data.docs);
+                            },
+                          );
+                        }),
                   ],
                 ),
                 const SizedBox(
@@ -372,5 +403,79 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         ],
       ),
     );
+  }
+
+  void generatePdf(List tableDataList) async {
+    final pdf = pw.Document();
+    final tableHeaders = [
+      'Member ID',
+      'Member Name',
+      'Member Status',
+    ];
+
+    String cdate2 = DateFormat("MMMM, dd, yyyy").format(DateTime.now());
+
+    List<List<String>> tableData = [];
+    for (var i = 0; i < tableDataList.length; i++) {
+      tableData.add([
+        tableDataList[i]['id'],
+        '${tableDataList[i]['firstName']} ${tableDataList[i]['middleInitial']}. ${tableDataList[i]['lastName']}',
+        tableDataList[i]['isActive'] ? 'Active' : 'Inactive',
+      ]);
+    }
+
+    pdf.addPage(
+      pw.MultiPage(
+        orientation: pw.PageOrientation.portrait,
+        build: (context) => [
+          pw.Align(
+            alignment: pw.Alignment.center,
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
+              children: [
+                pw.Text('KCC Membership Software',
+                    style: const pw.TextStyle(
+                      fontSize: 18,
+                    )),
+                pw.SizedBox(height: 10),
+                pw.Text(
+                  style: const pw.TextStyle(
+                    fontSize: 15,
+                  ),
+                  'Attendance',
+                ),
+                pw.SizedBox(height: 5),
+                pw.Text(
+                  style: const pw.TextStyle(
+                    fontSize: 10,
+                  ),
+                  cdate2,
+                ),
+              ],
+            ),
+          ),
+          pw.SizedBox(height: 20),
+          pw.Table.fromTextArray(
+            headers: tableHeaders,
+            data: tableData,
+            headerDecoration: const pw.BoxDecoration(),
+            rowDecoration: const pw.BoxDecoration(),
+            headerHeight: 25,
+            cellHeight: 45,
+            cellAlignments: {
+              0: pw.Alignment.centerLeft,
+              1: pw.Alignment.center,
+            },
+          ),
+          pw.SizedBox(height: 20),
+        ],
+      ),
+    );
+
+    await Printing.layoutPdf(onLayout: (format) async => pdf.save());
+
+    final output = await getTemporaryDirectory();
+    final file = io.File("${output.path}/payroll_report.pdf");
+    await file.writeAsBytes(await pdf.save());
   }
 }
