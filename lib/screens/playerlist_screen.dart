@@ -37,7 +37,6 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(imgUrl);
     return Scaffold(
       endDrawer: const DrawerWidget(),
       body: Stack(
@@ -261,247 +260,241 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                         }
 
                         final data = snapshot.requireData;
-                        return Expanded(
-                          child: SizedBox(
-                            child: ListView.separated(
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    leading: IconButton(
-                                      onPressed: () {
-                                        addMemberDialog(true, data.docs[index]);
-                                      },
-                                      icon: const Icon(
-                                        Icons.edit_outlined,
-                                        color: Colors.grey,
-                                      ),
+                        return SizedBox(
+                          height: 350,
+                          child: ListView.separated(
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  leading: IconButton(
+                                    onPressed: () {
+                                      addMemberDialog(true, data.docs[index]);
+                                    },
+                                    icon: const Icon(
+                                      Icons.edit_outlined,
+                                      color: Colors.grey,
                                     ),
-                                    title: Padding(
-                                      padding: const EdgeInsets.only(left: 30),
-                                      child: TextRegular(
-                                        text:
-                                            '${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}',
-                                        fontSize: 18,
-                                        color: Colors.grey,
-                                      ),
+                                  ),
+                                  title: Padding(
+                                    padding: const EdgeInsets.only(left: 30),
+                                    child: TextRegular(
+                                      text:
+                                          '${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}',
+                                      fontSize: 18,
+                                      color: Colors.grey,
                                     ),
-                                    trailing: SizedBox(
-                                      width: 75,
-                                      child: Row(
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                    title: TextBold(
-                                                        text: data.docs[index]
-                                                                ['isActive']
-                                                            ? 'Flag user confirmation'
-                                                            : 'Unflag user confirmation',
-                                                        fontSize: 16,
-                                                        color: Colors.black),
-                                                    content: TextRegular(
-                                                        text: data.docs[index]
-                                                                ['isActive']
-                                                            ? 'Are you sure you want to flag ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}?'
-                                                            : 'Are you sure you want to unflag ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}?',
-                                                        fontSize: 14,
-                                                        color: Colors.grey),
-                                                    actions: [
-                                                      TextButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child: TextRegular(
-                                                              text: 'Close',
-                                                              fontSize: 14,
-                                                              color:
-                                                                  Colors.grey)),
-                                                      TextButton(
-                                                          onPressed: () async {
-                                                            if (data.docs[index]
-                                                                ['isActive']) {
-                                                              await FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      'Members')
-                                                                  .doc(data
-                                                                      .docs[
-                                                                          index]
-                                                                      .id)
-                                                                  .update({
-                                                                'isActive':
-                                                                    false
-                                                              });
-                                                            } else {
-                                                              await FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      'Members')
-                                                                  .doc(data
-                                                                      .docs[
-                                                                          index]
-                                                                      .id)
-                                                                  .update({
-                                                                'isActive': true
-                                                              });
-                                                            }
+                                  ),
+                                  trailing: SizedBox(
+                                    width: 75,
+                                    child: Row(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: TextBold(
+                                                      text: data.docs[index]
+                                                              ['isActive']
+                                                          ? 'Flag user confirmation'
+                                                          : 'Unflag user confirmation',
+                                                      fontSize: 16,
+                                                      color: Colors.black),
+                                                  content: TextRegular(
+                                                      text: data.docs[index]
+                                                              ['isActive']
+                                                          ? 'Are you sure you want to flag ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}?'
+                                                          : 'Are you sure you want to unflag ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}?',
+                                                      fontSize: 14,
+                                                      color: Colors.grey),
+                                                  actions: [
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: TextRegular(
+                                                            text: 'Close',
+                                                            fontSize: 14,
+                                                            color:
+                                                                Colors.grey)),
+                                                    TextButton(
+                                                        onPressed: () async {
+                                                          if (data.docs[index]
+                                                              ['isActive']) {
+                                                            await FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'Members')
+                                                                .doc(data
+                                                                    .docs[index]
+                                                                    .id)
+                                                                .update({
+                                                              'isActive': false
+                                                            });
+                                                          } else {
+                                                            await FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'Members')
+                                                                .doc(data
+                                                                    .docs[index]
+                                                                    .id)
+                                                                .update({
+                                                              'isActive': true
+                                                            });
+                                                          }
 
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child: TextRegular(
-                                                              text: 'Continue',
-                                                              fontSize: 14,
-                                                              color:
-                                                                  Colors.black))
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            child: Icon(
-                                              Icons.circle,
-                                              color: data.docs[index]
-                                                      ['isActive']
-                                                  ? Colors.white
-                                                  : Colors.red,
-                                            ),
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: TextRegular(
+                                                            text: 'Continue',
+                                                            fontSize: 14,
+                                                            color:
+                                                                Colors.black))
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: Icon(
+                                            Icons.circle,
+                                            color: data.docs[index]['isActive']
+                                                ? Colors.white
+                                                : Colors.red,
                                           ),
-                                          const SizedBox(
-                                            width: 20,
-                                          ),
-                                          data.docs[index]['isActive']
-                                              ? StreamBuilder<QuerySnapshot>(
-                                                  stream: FirebaseFirestore
-                                                      .instance
-                                                      .collection('Attendance')
-                                                      .where('userId',
-                                                          isEqualTo: data
-                                                              .docs[index].id)
-                                                      .where('month',
-                                                          isEqualTo:
-                                                              DateTime.now()
-                                                                  .month)
-                                                      .where('year',
-                                                          isEqualTo:
-                                                              DateTime.now()
-                                                                  .year)
-                                                      .where(
-                                                          'day',
-                                                          isEqualTo:
-                                                              DateTime.now()
-                                                                  .day)
-                                                      .snapshots(),
-                                                  builder:
-                                                      (BuildContext context,
-                                                          AsyncSnapshot<
-                                                                  QuerySnapshot>
-                                                              snapshot) {
-                                                    if (snapshot.hasError) {
-                                                      print(snapshot.error);
-                                                      return const Center(
-                                                          child: Text('Error'));
-                                                    }
-                                                    if (snapshot
-                                                            .connectionState ==
-                                                        ConnectionState
-                                                            .waiting) {
-                                                      return const Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 50),
-                                                        child: Center(
-                                                            child:
-                                                                CircularProgressIndicator(
-                                                          color: Colors.black,
-                                                        )),
-                                                      );
-                                                    }
+                                        ),
+                                        const SizedBox(
+                                          width: 20,
+                                        ),
+                                        data.docs[index]['isActive']
+                                            ? StreamBuilder<QuerySnapshot>(
+                                                stream: FirebaseFirestore
+                                                    .instance
+                                                    .collection('Attendance')
+                                                    .where('userId',
+                                                        isEqualTo:
+                                                            data.docs[index].id)
+                                                    .where('month',
+                                                        isEqualTo:
+                                                            DateTime.now()
+                                                                .month)
+                                                    .where('year',
+                                                        isEqualTo:
+                                                            DateTime.now().year)
+                                                    .where('day',
+                                                        isEqualTo:
+                                                            DateTime.now().day)
+                                                    .snapshots(),
+                                                builder: (BuildContext context,
+                                                    AsyncSnapshot<QuerySnapshot>
+                                                        snapshot) {
+                                                  if (snapshot.hasError) {
+                                                    print(snapshot.error);
+                                                    return const Center(
+                                                        child: Text('Error'));
+                                                  }
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return const Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 50),
+                                                      child: Center(
+                                                          child:
+                                                              CircularProgressIndicator(
+                                                        color: Colors.black,
+                                                      )),
+                                                    );
+                                                  }
 
-                                                    final data1 =
-                                                        snapshot.requireData;
-                                                    return data1.docs.isEmpty
-                                                        ? GestureDetector(
-                                                            onTap: () {
-                                                              showDialog(
-                                                                context:
-                                                                    context,
-                                                                builder:
-                                                                    (context) {
-                                                                  return AlertDialog(
-                                                                    title: TextBold(
-                                                                        text:
-                                                                            'Attendance',
-                                                                        fontSize:
-                                                                            16,
-                                                                        color: Colors
-                                                                            .black),
-                                                                    content: TextRegular(
-                                                                        text:
-                                                                            'Mark ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']} as present?',
-                                                                        fontSize:
-                                                                            14,
-                                                                        color: Colors
-                                                                            .grey),
-                                                                    actions: [
-                                                                      TextButton(
-                                                                          onPressed:
-                                                                              () {
-                                                                            Navigator.pop(context);
-                                                                          },
-                                                                          child: TextRegular(
-                                                                              text: 'Close',
-                                                                              fontSize: 14,
-                                                                              color: Colors.grey)),
-                                                                      TextButton(
-                                                                          onPressed:
-                                                                              () {
-                                                                            addAttendance(
-                                                                                data.docs[index]['firstName'],
-                                                                                data.docs[index]['lastName'],
-                                                                                data.docs[index]['middleInitial'],
-                                                                                data.docs[index].id,
-                                                                                data.docs[index]['photo'],
-                                                                                data.docs[index]['isActive']);
-                                                                            Navigator.pop(context);
-                                                                          },
-                                                                          child: TextRegular(
-                                                                              text: 'Continue',
-                                                                              fontSize: 14,
-                                                                              color: Colors.black))
-                                                                    ],
-                                                                  );
-                                                                },
-                                                              );
-                                                            },
-                                                            child: const Icon(
-                                                              Icons
-                                                                  .check_box_outline_blank_outlined,
-                                                              color:
-                                                                  Colors.grey,
-                                                            ),
-                                                          )
-                                                        : const Icon(
-                                                            Icons.check_box,
-                                                            color: Colors.green,
-                                                          );
-                                                  })
-                                              : const SizedBox()
-                                        ],
-                                      ),
+                                                  final data1 =
+                                                      snapshot.requireData;
+                                                  return data1.docs.isEmpty
+                                                      ? GestureDetector(
+                                                          onTap: () {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (context) {
+                                                                return AlertDialog(
+                                                                  title: TextBold(
+                                                                      text:
+                                                                          'Attendance',
+                                                                      fontSize:
+                                                                          16,
+                                                                      color: Colors
+                                                                          .black),
+                                                                  content: TextRegular(
+                                                                      text:
+                                                                          'Mark ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']} as present?',
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: Colors
+                                                                          .grey),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                        child: TextRegular(
+                                                                            text:
+                                                                                'Close',
+                                                                            fontSize:
+                                                                                14,
+                                                                            color:
+                                                                                Colors.grey)),
+                                                                    TextButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          addAttendance(
+                                                                              data.docs[index]['firstName'],
+                                                                              data.docs[index]['lastName'],
+                                                                              data.docs[index]['middleInitial'],
+                                                                              data.docs[index].id,
+                                                                              data.docs[index]['photo'],
+                                                                              data.docs[index]['isActive']);
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                        child: TextRegular(
+                                                                            text:
+                                                                                'Continue',
+                                                                            fontSize:
+                                                                                14,
+                                                                            color:
+                                                                                Colors.black))
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                          child: const Icon(
+                                                            Icons
+                                                                .check_box_outline_blank_outlined,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        )
+                                                      : const Icon(
+                                                          Icons.check_box,
+                                                          color: Colors.green,
+                                                        );
+                                                })
+                                            : const SizedBox()
+                                      ],
                                     ),
-                                  );
-                                },
-                                separatorBuilder: (context, index) {
-                                  return const Divider(
-                                    color: Colors.grey,
-                                  );
-                                },
-                                itemCount: data.docs.length),
-                          ),
+                                  ),
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return const Divider(
+                                  color: Colors.grey,
+                                );
+                              },
+                              itemCount: data.docs.length),
                         );
                       }),
                 ),
@@ -526,6 +519,8 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
         imgUrl = data['photo'];
       });
     }
+
+    print(imgUrl);
     showDialog(
       context: context,
       builder: (context) {
@@ -557,22 +552,8 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            isUploaded || inEdit
-                                ? Container(
-                                    height: 175,
-                                    width: 150,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: NetworkImage(
-                                            imgUrl,
-                                          ),
-                                          fit: BoxFit.cover),
-                                      border: Border.all(
-                                        color: Colors.grey,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  )
+                            imgUrl != '' || inEdit
+                                ? Image.network(imgUrl)
                                 : Container(
                                     height: 175,
                                     width: 150,
