@@ -31,6 +31,8 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
   final statusController = TextEditingController();
   final addressController = TextEditingController();
 
+  final incomeSourceController = TextEditingController();
+
   int dropValue = 0;
 
   bool filter = true;
@@ -143,6 +145,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                         middlenameController.clear();
                         lastnameController.clear();
                         birthdateController.clear();
+                        incomeSourceController.clear();
                         statusController.clear();
                         addressController.clear();
 
@@ -549,12 +552,12 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
         birthdateController.text = data['brithdate'];
         statusController.text = data['status'];
         addressController.text = data['address'];
+        incomeSourceController.text = data['incomeSource'];
 
         imgUrl = data['photo'];
       });
     }
 
-    print(imgUrl);
     showDialog(
       context: context,
       builder: (context) {
@@ -562,7 +565,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
           child: StatefulBuilder(builder: (context, setState) {
             return SizedBox(
               width: 430,
-              height: 550,
+              height: 650,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                 child: Column(
@@ -818,6 +821,13 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                           height: 10,
                         ),
                         TextFieldWidget(
+                            width: 365,
+                            label: 'SOURCE OF INCOME',
+                            controller: incomeSourceController),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        TextFieldWidget(
                             maxLine: 5,
                             width: 365,
                             height: 100,
@@ -871,7 +881,8 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                     statusController.text,
                                     addressController.text,
                                     membersLength.toString(),
-                                    imgUrl);
+                                    imgUrl,
+                                    incomeSourceController.text);
                               }
 
                               firstnameController.clear();
@@ -919,6 +930,9 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
     }
     if (addressController.text == "") {
       errMsg = "Address is required.";
+    }
+    if (incomeSourceController.text == "") {
+      errMsg = "Source of Income is required.";
     }
 
     if (imgUrl == '') {
