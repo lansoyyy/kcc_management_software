@@ -9,7 +9,8 @@ Future addMember(
     String address,
     String id,
     String photo,
-    String incomeSource) async {
+    String incomeSource,
+    String idPhoto) async {
   final docUser = FirebaseFirestore.instance.collection('Members').doc(id);
 
   final json = {
@@ -23,7 +24,8 @@ Future addMember(
     'dateTime': DateTime.now(),
     'photo': photo,
     'isActive': true,
-    'incomeSource': incomeSource
+    'incomeSource': incomeSource,
+    'idPhoto': idPhoto
   };
 
   await docUser.set(json);
