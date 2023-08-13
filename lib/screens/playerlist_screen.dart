@@ -43,502 +43,520 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       endDrawer: const DrawerWidget(),
-      body: Stack(
-        children: [
-          Column(
+      body: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.black),
+          ),
+          width: 700,
+          child: Stack(
             children: [
-              Container(
-                height: 300,
-                color: Colors.grey[200],
+              Column(
+                children: [
+                  Container(
+                    height: 300,
+                    color: Colors.grey[200],
+                  ),
+                  Flexible(
+                    fit: FlexFit.tight,
+                    child: Container(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-              Flexible(
-                fit: FlexFit.tight,
-                child: Container(
-                  color: Colors.white,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          height: 50,
+                          width: 150,
+                          color: Colors.black,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 100),
+                          child: TextBold(
+                            text: 'PLAYER LIST',
+                            fontSize: 24,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Builder(builder: (context) {
+                          return GestureDetector(
+                            onTap: () async {
+                              Scaffold.of(context).openEndDrawer();
+                            },
+                            child: const Icon(
+                              Icons.menu_rounded,
+                              color: Colors.grey,
+                              size: 42,
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 37.5,
+                          width: 250,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                              ),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10, right: 0),
+                            child: TextField(
+                              onChanged: (value) {
+                                setState(() {
+                                  nameSearched = value;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  label: TextRegular(
+                                    text: 'Search User',
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                  hintStyle: const TextStyle(
+                                      fontFamily: 'QRegular', fontSize: 12),
+                                  suffixIcon: const Icon(
+                                    Icons.search,
+                                    color: Colors.grey,
+                                  )),
+                              controller: searchController,
+                            ),
+                          ),
+                        ),
+                        const Expanded(child: SizedBox()),
+                        ButtonWidget(
+                          height: 40,
+                          radius: 10,
+                          width: 125,
+                          fontSize: 10,
+                          color: Colors.grey[300],
+                          label: 'ADD MEMBER',
+                          onPressed: () {
+                            firstnameController.clear();
+                            middlenameController.clear();
+                            lastnameController.clear();
+                            birthdateController.clear();
+                            incomeSourceController.clear();
+                            statusController.clear();
+                            addressController.clear();
+
+                            addMemberDialog(false, {});
+                          },
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('Members')
+                                .snapshots(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.hasError) {
+                                print(snapshot.error);
+                                return const Center(child: Text('Error'));
+                              }
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Padding(
+                                  padding: EdgeInsets.only(top: 50),
+                                  child: Center(
+                                      child: CircularProgressIndicator(
+                                    color: Colors.black,
+                                  )),
+                                );
+                              }
+
+                              final data = snapshot.requireData;
+                              return ButtonWidget(
+                                height: 40,
+                                radius: 10,
+                                width: 100,
+                                fontSize: 10,
+                                color: Colors.grey[300],
+                                label: 'EXPORT',
+                                onPressed: () {
+                                  generatePdf(data.docs);
+                                },
+                              );
+                            }),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                              ),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10, right: 10),
+                            child: SizedBox(
+                              height: 40,
+                              child: DropdownButton(
+                                underline: const SizedBox(),
+                                value: dropValue,
+                                items: [
+                                  DropdownMenuItem(
+                                    onTap: () {
+                                      setState(() {
+                                        filter = true;
+                                      });
+                                    },
+                                    value: 0,
+                                    child: TextRegular(
+                                      text: 'Active Players',
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    onTap: () {
+                                      setState(() {
+                                        filter = false;
+                                      });
+                                    },
+                                    value: 1,
+                                    child: TextRegular(
+                                      text: 'Flagged Players',
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                                onChanged: (value) {
+                                  setState(() {
+                                    dropValue = int.parse(value.toString());
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                        TextBold(
+                          text:
+                              '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}',
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      height: 550,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        border: Border.all(
+                          width: 1,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      child: StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('Members')
+                              .where('firstName',
+                                  isGreaterThanOrEqualTo:
+                                      toBeginningOfSentenceCase(nameSearched))
+                              .where('firstName',
+                                  isLessThan:
+                                      '${toBeginningOfSentenceCase(nameSearched)}z')
+                              .where('isActive', isEqualTo: filter)
+                              .snapshots(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasError) {
+                              print(snapshot.error);
+                              return const Center(child: Text('Error'));
+                            }
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Padding(
+                                padding: EdgeInsets.only(top: 50),
+                                child: Center(
+                                    child: CircularProgressIndicator(
+                                  color: Colors.black,
+                                )),
+                              );
+                            }
+
+                            final data = snapshot.requireData;
+                            return SizedBox(
+                              height: 350,
+                              child: ListView.separated(
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      leading: IconButton(
+                                        onPressed: () {
+                                          addMemberDialog(
+                                              true, data.docs[index]);
+                                        },
+                                        icon: const Icon(
+                                          Icons.edit_outlined,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      title: Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 30),
+                                        child: TextRegular(
+                                          text:
+                                              '${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}',
+                                          fontSize: 18,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      trailing: SizedBox(
+                                        width: 75,
+                                        child: Row(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      title: TextBold(
+                                                          text: data.docs[index]
+                                                                  ['isActive']
+                                                              ? 'Flag user confirmation'
+                                                              : 'Unflag user confirmation',
+                                                          fontSize: 16,
+                                                          color: Colors.black),
+                                                      content: TextRegular(
+                                                          text: data.docs[index]
+                                                                  ['isActive']
+                                                              ? 'Are you sure you want to flag ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}?'
+                                                              : 'Are you sure you want to unflag ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}?',
+                                                          fontSize: 14,
+                                                          color: Colors.grey),
+                                                      actions: [
+                                                        TextButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: TextRegular(
+                                                                text: 'Close',
+                                                                fontSize: 14,
+                                                                color: Colors
+                                                                    .grey)),
+                                                        TextButton(
+                                                            onPressed:
+                                                                () async {
+                                                              if (data.docs[
+                                                                      index][
+                                                                  'isActive']) {
+                                                                await FirebaseFirestore
+                                                                    .instance
+                                                                    .collection(
+                                                                        'Members')
+                                                                    .doc(data
+                                                                        .docs[
+                                                                            index]
+                                                                        .id)
+                                                                    .update({
+                                                                  'isActive':
+                                                                      false
+                                                                });
+                                                              } else {
+                                                                await FirebaseFirestore
+                                                                    .instance
+                                                                    .collection(
+                                                                        'Members')
+                                                                    .doc(data
+                                                                        .docs[
+                                                                            index]
+                                                                        .id)
+                                                                    .update({
+                                                                  'isActive':
+                                                                      true
+                                                                });
+                                                              }
+
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: TextRegular(
+                                                                text:
+                                                                    'Continue',
+                                                                fontSize: 14,
+                                                                color: Colors
+                                                                    .black))
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              child: Icon(
+                                                Icons.circle,
+                                                color: data.docs[index]
+                                                        ['isActive']
+                                                    ? Colors.white
+                                                    : Colors.red,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                            // data.docs[index]['isActive']
+                                            //     ? StreamBuilder<QuerySnapshot>(
+                                            //         stream: FirebaseFirestore
+                                            //             .instance
+                                            //             .collection('Attendance')
+                                            //             .where('userId',
+                                            //                 isEqualTo:
+                                            //                     data.docs[index].id)
+                                            //             .where('month',
+                                            //                 isEqualTo:
+                                            //                     DateTime.now()
+                                            //                         .month)
+                                            //             .where('year',
+                                            //                 isEqualTo:
+                                            //                     DateTime.now().year)
+                                            //             .where('day',
+                                            //                 isEqualTo:
+                                            //                     DateTime.now().day)
+                                            //             .snapshots(),
+                                            //         builder: (BuildContext context,
+                                            //             AsyncSnapshot<QuerySnapshot>
+                                            //                 snapshot) {
+                                            //           if (snapshot.hasError) {
+                                            //             print(snapshot.error);
+                                            //             return const Center(
+                                            //                 child: Text('Error'));
+                                            //           }
+                                            //           if (snapshot
+                                            //                   .connectionState ==
+                                            //               ConnectionState.waiting) {
+                                            //             return const Padding(
+                                            //               padding: EdgeInsets.only(
+                                            //                   top: 50),
+                                            //               child: Center(
+                                            //                   child:
+                                            //                       CircularProgressIndicator(
+                                            //                 color: Colors.black,
+                                            //               )),
+                                            //             );
+                                            //           }
+
+                                            //           final data1 =
+                                            //               snapshot.requireData;
+                                            //           return data1.docs.isEmpty
+                                            //               ? GestureDetector(
+                                            //                   onTap: () {
+                                            //                     showDialog(
+                                            //                       context: context,
+                                            //                       builder:
+                                            //                           (context) {
+                                            //                         return AlertDialog(
+                                            //                           title: TextBold(
+                                            //                               text:
+                                            //                                   'Attendance',
+                                            //                               fontSize:
+                                            //                                   16,
+                                            //                               color: Colors
+                                            //                                   .black),
+                                            //                           content: TextRegular(
+                                            //                               text:
+                                            //                                   'Mark ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']} as present?',
+                                            //                               fontSize:
+                                            //                                   14,
+                                            //                               color: Colors
+                                            //                                   .grey),
+                                            //                           actions: [
+                                            //                             TextButton(
+                                            //                                 onPressed:
+                                            //                                     () {
+                                            //                                   Navigator.pop(
+                                            //                                       context);
+                                            //                                 },
+                                            //                                 child: TextRegular(
+                                            //                                     text:
+                                            //                                         'Close',
+                                            //                                     fontSize:
+                                            //                                         14,
+                                            //                                     color:
+                                            //                                         Colors.grey)),
+                                            //                             TextButton(
+                                            //                                 onPressed:
+                                            //                                     () {
+                                            //                                   addAttendance(
+                                            //                                       data.docs[index]['firstName'],
+                                            //                                       data.docs[index]['lastName'],
+                                            //                                       data.docs[index]['middleInitial'],
+                                            //                                       data.docs[index].id,
+                                            //                                       data.docs[index]['photo'],
+                                            //                                       data.docs[index]['isActive']);
+                                            //                                   Navigator.pop(
+                                            //                                       context);
+                                            //                                 },
+                                            //                                 child: TextRegular(
+                                            //                                     text:
+                                            //                                         'Continue',
+                                            //                                     fontSize:
+                                            //                                         14,
+                                            //                                     color:
+                                            //                                         Colors.black))
+                                            //                           ],
+                                            //                         );
+                                            //                       },
+                                            //                     );
+                                            //                   },
+                                            //                   child: const Icon(
+                                            //                     Icons
+                                            //                         .check_box_outline_blank_outlined,
+                                            //                     color: Colors.grey,
+                                            //                   ),
+                                            //                 )
+                                            //               : const Icon(
+                                            //                   Icons.check_box,
+                                            //                   color: Colors.green,
+                                            //                 );
+                                            //         })
+                                            //     : const SizedBox()
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  separatorBuilder: (context, index) {
+                                    return const Divider(
+                                      color: Colors.grey,
+                                    );
+                                  },
+                                  itemCount: data.docs.length),
+                            );
+                          }),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 150,
-                      color: Colors.black,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 100),
-                      child: TextBold(
-                        text: 'PLAYER LIST',
-                        fontSize: 24,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    Builder(builder: (context) {
-                      return GestureDetector(
-                        onTap: () async {
-                          Scaffold.of(context).openEndDrawer();
-                        },
-                        child: const Icon(
-                          Icons.menu_rounded,
-                          color: Colors.grey,
-                          size: 42,
-                        ),
-                      );
-                    }),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 37.5,
-                      width: 250,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey,
-                          ),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 0),
-                        child: TextField(
-                          onChanged: (value) {
-                            setState(() {
-                              nameSearched = value;
-                            });
-                          },
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              label: TextRegular(
-                                text: 'Search User',
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                              hintStyle: const TextStyle(
-                                  fontFamily: 'QRegular', fontSize: 12),
-                              suffixIcon: const Icon(
-                                Icons.search,
-                                color: Colors.grey,
-                              )),
-                          controller: searchController,
-                        ),
-                      ),
-                    ),
-                    const Expanded(child: SizedBox()),
-                    ButtonWidget(
-                      height: 40,
-                      radius: 10,
-                      width: 125,
-                      fontSize: 10,
-                      color: Colors.grey[300],
-                      label: 'ADD MEMBER',
-                      onPressed: () {
-                        firstnameController.clear();
-                        middlenameController.clear();
-                        lastnameController.clear();
-                        birthdateController.clear();
-                        incomeSourceController.clear();
-                        statusController.clear();
-                        addressController.clear();
-
-                        addMemberDialog(false, {});
-                      },
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection('Members')
-                            .snapshots(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.hasError) {
-                            print(snapshot.error);
-                            return const Center(child: Text('Error'));
-                          }
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Padding(
-                              padding: EdgeInsets.only(top: 50),
-                              child: Center(
-                                  child: CircularProgressIndicator(
-                                color: Colors.black,
-                              )),
-                            );
-                          }
-
-                          final data = snapshot.requireData;
-                          return ButtonWidget(
-                            height: 40,
-                            radius: 10,
-                            width: 100,
-                            fontSize: 10,
-                            color: Colors.grey[300],
-                            label: 'EXPORT',
-                            onPressed: () {
-                              generatePdf(data.docs);
-                            },
-                          );
-                        }),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey,
-                          ),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        child: SizedBox(
-                          height: 40,
-                          child: DropdownButton(
-                            underline: const SizedBox(),
-                            value: dropValue,
-                            items: [
-                              DropdownMenuItem(
-                                onTap: () {
-                                  setState(() {
-                                    filter = true;
-                                  });
-                                },
-                                value: 0,
-                                child: TextRegular(
-                                  text: 'Active Players',
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              DropdownMenuItem(
-                                onTap: () {
-                                  setState(() {
-                                    filter = false;
-                                  });
-                                },
-                                value: 1,
-                                child: TextRegular(
-                                  text: 'Flagged Players',
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                            onChanged: (value) {
-                              setState(() {
-                                dropValue = int.parse(value.toString());
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                    TextBold(
-                      text:
-                          '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}',
-                      fontSize: 14,
-                      color: Colors.black,
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  height: 550,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    border: Border.all(
-                      width: 1,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  child: StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('Members')
-                          .where('firstName',
-                              isGreaterThanOrEqualTo:
-                                  toBeginningOfSentenceCase(nameSearched))
-                          .where('firstName',
-                              isLessThan:
-                                  '${toBeginningOfSentenceCase(nameSearched)}z')
-                          .where('isActive', isEqualTo: filter)
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasError) {
-                          print(snapshot.error);
-                          return const Center(child: Text('Error'));
-                        }
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Padding(
-                            padding: EdgeInsets.only(top: 50),
-                            child: Center(
-                                child: CircularProgressIndicator(
-                              color: Colors.black,
-                            )),
-                          );
-                        }
-
-                        final data = snapshot.requireData;
-                        return SizedBox(
-                          height: 350,
-                          child: ListView.separated(
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  leading: IconButton(
-                                    onPressed: () {
-                                      addMemberDialog(true, data.docs[index]);
-                                    },
-                                    icon: const Icon(
-                                      Icons.edit_outlined,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  title: Padding(
-                                    padding: const EdgeInsets.only(left: 30),
-                                    child: TextRegular(
-                                      text:
-                                          '${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}',
-                                      fontSize: 18,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  trailing: SizedBox(
-                                    width: 75,
-                                    child: Row(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return AlertDialog(
-                                                  title: TextBold(
-                                                      text: data.docs[index]
-                                                              ['isActive']
-                                                          ? 'Flag user confirmation'
-                                                          : 'Unflag user confirmation',
-                                                      fontSize: 16,
-                                                      color: Colors.black),
-                                                  content: TextRegular(
-                                                      text: data.docs[index]
-                                                              ['isActive']
-                                                          ? 'Are you sure you want to flag ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}?'
-                                                          : 'Are you sure you want to unflag ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}?',
-                                                      fontSize: 14,
-                                                      color: Colors.grey),
-                                                  actions: [
-                                                    TextButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: TextRegular(
-                                                            text: 'Close',
-                                                            fontSize: 14,
-                                                            color:
-                                                                Colors.grey)),
-                                                    TextButton(
-                                                        onPressed: () async {
-                                                          if (data.docs[index]
-                                                              ['isActive']) {
-                                                            await FirebaseFirestore
-                                                                .instance
-                                                                .collection(
-                                                                    'Members')
-                                                                .doc(data
-                                                                    .docs[index]
-                                                                    .id)
-                                                                .update({
-                                                              'isActive': false
-                                                            });
-                                                          } else {
-                                                            await FirebaseFirestore
-                                                                .instance
-                                                                .collection(
-                                                                    'Members')
-                                                                .doc(data
-                                                                    .docs[index]
-                                                                    .id)
-                                                                .update({
-                                                              'isActive': true
-                                                            });
-                                                          }
-
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: TextRegular(
-                                                            text: 'Continue',
-                                                            fontSize: 14,
-                                                            color:
-                                                                Colors.black))
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                          child: Icon(
-                                            Icons.circle,
-                                            color: data.docs[index]['isActive']
-                                                ? Colors.white
-                                                : Colors.red,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        // data.docs[index]['isActive']
-                                        //     ? StreamBuilder<QuerySnapshot>(
-                                        //         stream: FirebaseFirestore
-                                        //             .instance
-                                        //             .collection('Attendance')
-                                        //             .where('userId',
-                                        //                 isEqualTo:
-                                        //                     data.docs[index].id)
-                                        //             .where('month',
-                                        //                 isEqualTo:
-                                        //                     DateTime.now()
-                                        //                         .month)
-                                        //             .where('year',
-                                        //                 isEqualTo:
-                                        //                     DateTime.now().year)
-                                        //             .where('day',
-                                        //                 isEqualTo:
-                                        //                     DateTime.now().day)
-                                        //             .snapshots(),
-                                        //         builder: (BuildContext context,
-                                        //             AsyncSnapshot<QuerySnapshot>
-                                        //                 snapshot) {
-                                        //           if (snapshot.hasError) {
-                                        //             print(snapshot.error);
-                                        //             return const Center(
-                                        //                 child: Text('Error'));
-                                        //           }
-                                        //           if (snapshot
-                                        //                   .connectionState ==
-                                        //               ConnectionState.waiting) {
-                                        //             return const Padding(
-                                        //               padding: EdgeInsets.only(
-                                        //                   top: 50),
-                                        //               child: Center(
-                                        //                   child:
-                                        //                       CircularProgressIndicator(
-                                        //                 color: Colors.black,
-                                        //               )),
-                                        //             );
-                                        //           }
-
-                                        //           final data1 =
-                                        //               snapshot.requireData;
-                                        //           return data1.docs.isEmpty
-                                        //               ? GestureDetector(
-                                        //                   onTap: () {
-                                        //                     showDialog(
-                                        //                       context: context,
-                                        //                       builder:
-                                        //                           (context) {
-                                        //                         return AlertDialog(
-                                        //                           title: TextBold(
-                                        //                               text:
-                                        //                                   'Attendance',
-                                        //                               fontSize:
-                                        //                                   16,
-                                        //                               color: Colors
-                                        //                                   .black),
-                                        //                           content: TextRegular(
-                                        //                               text:
-                                        //                                   'Mark ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']} as present?',
-                                        //                               fontSize:
-                                        //                                   14,
-                                        //                               color: Colors
-                                        //                                   .grey),
-                                        //                           actions: [
-                                        //                             TextButton(
-                                        //                                 onPressed:
-                                        //                                     () {
-                                        //                                   Navigator.pop(
-                                        //                                       context);
-                                        //                                 },
-                                        //                                 child: TextRegular(
-                                        //                                     text:
-                                        //                                         'Close',
-                                        //                                     fontSize:
-                                        //                                         14,
-                                        //                                     color:
-                                        //                                         Colors.grey)),
-                                        //                             TextButton(
-                                        //                                 onPressed:
-                                        //                                     () {
-                                        //                                   addAttendance(
-                                        //                                       data.docs[index]['firstName'],
-                                        //                                       data.docs[index]['lastName'],
-                                        //                                       data.docs[index]['middleInitial'],
-                                        //                                       data.docs[index].id,
-                                        //                                       data.docs[index]['photo'],
-                                        //                                       data.docs[index]['isActive']);
-                                        //                                   Navigator.pop(
-                                        //                                       context);
-                                        //                                 },
-                                        //                                 child: TextRegular(
-                                        //                                     text:
-                                        //                                         'Continue',
-                                        //                                     fontSize:
-                                        //                                         14,
-                                        //                                     color:
-                                        //                                         Colors.black))
-                                        //                           ],
-                                        //                         );
-                                        //                       },
-                                        //                     );
-                                        //                   },
-                                        //                   child: const Icon(
-                                        //                     Icons
-                                        //                         .check_box_outline_blank_outlined,
-                                        //                     color: Colors.grey,
-                                        //                   ),
-                                        //                 )
-                                        //               : const Icon(
-                                        //                   Icons.check_box,
-                                        //                   color: Colors.green,
-                                        //                 );
-                                        //         })
-                                        //     : const SizedBox()
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                              separatorBuilder: (context, index) {
-                                return const Divider(
-                                  color: Colors.grey,
-                                );
-                              },
-                              itemCount: data.docs.length),
-                        );
-                      }),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
