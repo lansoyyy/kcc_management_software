@@ -5,7 +5,6 @@ import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:kcc_management_software/services/add_member.dart';
 import 'package:kcc_management_software/widgets/button_widget.dart';
 import 'package:kcc_management_software/widgets/drawer_widget.dart';
 import 'package:kcc_management_software/widgets/text_widget.dart';
@@ -28,10 +27,15 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
   final lastnameController = TextEditingController();
   final middlenameController = TextEditingController();
   final birthdateController = TextEditingController();
-  final statusController = TextEditingController();
-  final addressController = TextEditingController();
+  final nationalityController = TextEditingController();
+  final presentAddress = TextEditingController();
+  final permanentAddress = TextEditingController();
 
-  final incomeSourceController = TextEditingController();
+  final fundsSourceController = TextEditingController();
+  final natureworkController = TextEditingController();
+  final contactnumberController = TextEditingController();
+  final numberController = TextEditingController();
+  final bennameController = TextEditingController();
 
   int dropValue = 0;
 
@@ -151,9 +155,9 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             middlenameController.clear();
                             lastnameController.clear();
                             birthdateController.clear();
-                            incomeSourceController.clear();
-                            statusController.clear();
-                            addressController.clear();
+                            fundsSourceController.clear();
+                            nationalityController.clear();
+                            presentAddress.clear();
 
                             addMemberDialog(false, {});
                           },
@@ -568,9 +572,9 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
         lastnameController.text = data['lastName'];
         middlenameController.text = data['middleInitial'];
         birthdateController.text = data['brithdate'];
-        statusController.text = data['status'];
-        addressController.text = data['address'];
-        incomeSourceController.text = data['incomeSource'];
+        nationalityController.text = data['status'];
+        presentAddress.text = data['address'];
+        fundsSourceController.text = data['incomeSource'];
 
         imgUrl = data['photo'];
 
@@ -584,421 +588,466 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
         return Dialog(
           child: StatefulBuilder(builder: (context, setState) {
             return SizedBox(
-              width: 430,
+              width: 480,
               height: 650,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(
-                          Icons.close,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(
+                            Icons.close,
+                          ),
                         ),
                       ),
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            imgUrl != '' || inEdit
-                                ? Container(
-                                    height: 175,
-                                    width: 150,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: NetworkImage(
-                                            imgUrl,
-                                          ),
-                                          fit: BoxFit.cover),
-                                      border: Border.all(
-                                        color: Colors.grey,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              imgUrl != '' || inEdit
+                                  ? Container(
+                                      height: 175,
+                                      width: 150,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: NetworkImage(
+                                              imgUrl,
+                                            ),
+                                            fit: BoxFit.cover),
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  )
-                                : Container(
-                                    height: 175,
-                                    width: 150,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Colors.grey,
+                                    )
+                                  : Container(
+                                      height: 175,
+                                      width: 150,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
-                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                  ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            inEdit
-                                ? ButtonWidget(
-                                    height: 40,
-                                    radius: 10,
-                                    width: 125,
-                                    fontSize: 10,
-                                    color: Colors.grey[300],
-                                    label: 'VIEW ID',
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            content: Container(
-                                              height: 250,
-                                              width: 250,
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                  image: NetworkImage(
-                                                    imgUrl2,
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              inEdit
+                                  ? ButtonWidget(
+                                      height: 40,
+                                      radius: 10,
+                                      width: 125,
+                                      fontSize: 10,
+                                      color: Colors.grey[300],
+                                      label: 'VIEW ID',
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              content: Container(
+                                                height: 250,
+                                                width: 250,
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: NetworkImage(
+                                                      imgUrl2,
+                                                    ),
+                                                    fit: BoxFit.cover,
                                                   ),
-                                                  fit: BoxFit.cover,
                                                 ),
                                               ),
-                                            ),
-                                            actions: [
-                                              TextButton(
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: TextBold(
+                                                    text: 'Close',
+                                                    fontSize: 14,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    )
+                                  : ButtonWidget(
+                                      height: 40,
+                                      radius: 10,
+                                      width: 125,
+                                      fontSize: 10,
+                                      color: Colors.grey[300],
+                                      label: 'UPLOAD',
+                                      onPressed: () {
+                                        InputElement input =
+                                            FileUploadInputElement()
+                                                as InputElement
+                                              ..accept = 'image/*';
+                                        FirebaseStorage fs =
+                                            FirebaseStorage.instance;
+                                        input.click();
+                                        input.onChange.listen((event) {
+                                          final file = input.files!.first;
+                                          final reader = FileReader();
+                                          reader.readAsDataUrl(file);
+                                          reader.onLoadEnd
+                                              .listen((event) async {
+                                            var snapshot = await fs
+                                                .ref()
+                                                .child('newfile')
+                                                .putBlob(file);
+                                            String downloadUrl = await snapshot
+                                                .ref
+                                                .getDownloadURL();
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    content: TextRegular(
+                                                        text:
+                                                            'Photo Uploaded Succesfully!',
+                                                        fontSize: 14,
+                                                        color: Colors.white)));
+
+                                            setState(() {
+                                              imgUrl = downloadUrl;
+
+                                              isUploaded = true;
+                                            });
+                                          });
+                                        });
+                                      },
+                                    ),
+                            ],
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      TextBold(
+                                        text: 'ID NUMBER',
+                                        fontSize: 18,
+                                        color: Colors.grey,
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      TextRegular(
+                                        text: inEdit ? data.id : '',
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                      ),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      Icon(
+                                        Icons.circle,
+                                        color: inEdit
+                                            ? data['isActive']
+                                                ? Colors.blue
+                                                : Colors.red
+                                            : Colors.white,
+                                      ),
+                                    ],
+                                  ),
+                                  TextRegular(
+                                    text:
+                                        'REGISTRATION DATE: ${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}',
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      TextFieldWidget(
+                                          width: 150,
+                                          height: 35,
+                                          label: 'FIRST NAME',
+                                          controller: firstnameController),
+                                      const SizedBox(
+                                        width: 15,
+                                      ),
+                                      TextFieldWidget(
+                                          isPassword: false,
+                                          padding: 2.5,
+                                          width: 50,
+                                          height: 35,
+                                          label: 'MI',
+                                          controller: middlenameController),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  TextFieldWidget(
+                                      width: 217,
+                                      height: 35,
+                                      label: 'LAST NAME',
+                                      controller: lastnameController),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              ButtonWidget(
+                                height: 35,
+                                radius: 0,
+                                width: 217,
+                                fontSize: 10,
+                                color: Colors.red[300],
+                                label: !inEdit ? 'UPLOAD ID' : 'DELETE USER',
+                                onPressed: () {
+                                  if (inEdit) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: TextBold(
+                                              text: 'Delete Confirmation',
+                                              fontSize: 16,
+                                              color: Colors.black),
+                                          content: TextRegular(
+                                              text:
+                                                  'Are you sure you want to delete this user?',
+                                              fontSize: 14,
+                                              color: Colors.grey),
+                                          actions: [
+                                            TextButton(
                                                 onPressed: () {
                                                   Navigator.pop(context);
                                                 },
-                                                child: TextBold(
-                                                  text: 'Close',
-                                                  fontSize: 14,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                  )
-                                : ButtonWidget(
-                                    height: 40,
-                                    radius: 10,
-                                    width: 125,
-                                    fontSize: 10,
-                                    color: Colors.grey[300],
-                                    label: 'UPLOAD',
-                                    onPressed: () {
-                                      InputElement input =
-                                          FileUploadInputElement()
-                                              as InputElement
-                                            ..accept = 'image/*';
-                                      FirebaseStorage fs =
-                                          FirebaseStorage.instance;
-                                      input.click();
-                                      input.onChange.listen((event) {
-                                        final file = input.files!.first;
-                                        final reader = FileReader();
-                                        reader.readAsDataUrl(file);
-                                        reader.onLoadEnd.listen((event) async {
-                                          var snapshot = await fs
-                                              .ref()
-                                              .child('newfile')
-                                              .putBlob(file);
-                                          String downloadUrl = await snapshot
-                                              .ref
-                                              .getDownloadURL();
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                                  content: TextRegular(
-                                                      text:
-                                                          'Photo Uploaded Succesfully!',
-                                                      fontSize: 14,
-                                                      color: Colors.white)));
+                                                child: TextRegular(
+                                                    text: 'Close',
+                                                    fontSize: 14,
+                                                    color: Colors.grey)),
+                                            TextButton(
+                                                onPressed: () async {
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('Members')
+                                                      .doc(data.id)
+                                                      .delete();
 
-                                          setState(() {
-                                            imgUrl = downloadUrl;
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: TextRegular(
+                                                    text: 'Continue',
+                                                    fontSize: 14,
+                                                    color: Colors.black))
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    InputElement input =
+                                        FileUploadInputElement() as InputElement
+                                          ..accept = 'image/*';
+                                    FirebaseStorage fs =
+                                        FirebaseStorage.instance;
+                                    input.click();
+                                    input.onChange.listen((event) {
+                                      final file = input.files!.first;
+                                      final reader = FileReader();
+                                      reader.readAsDataUrl(file);
+                                      reader.onLoadEnd.listen((event) async {
+                                        var snapshot = await fs
+                                            .ref()
+                                            .child('newfile')
+                                            .putBlob(file);
+                                        String downloadUrl =
+                                            await snapshot.ref.getDownloadURL();
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: TextRegular(
+                                                    text:
+                                                        'ID Uploaded Succesfully!',
+                                                    fontSize: 14,
+                                                    color: Colors.white)));
 
-                                            isUploaded = true;
-                                          });
+                                        setState(() {
+                                          imgUrl2 = downloadUrl;
+
+                                          isUploaded = true;
                                         });
                                       });
-                                    },
-                                  ),
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Column(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    TextBold(
-                                      text: 'ID NUMBER',
-                                      fontSize: 18,
-                                      color: Colors.grey,
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    TextRegular(
-                                      text: inEdit ? data.id : '',
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                    ),
-                                    const SizedBox(
-                                      width: 20,
-                                    ),
-                                    Icon(
-                                      Icons.circle,
-                                      color: inEdit
-                                          ? data['isActive']
-                                              ? Colors.blue
-                                              : Colors.red
-                                          : Colors.white,
-                                    ),
-                                  ],
-                                ),
-                                TextRegular(
-                                  text:
-                                      'REGISTRATION DATE: ${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}',
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    TextFieldWidget(
-                                        width: 150,
-                                        height: 35,
-                                        label: 'FIRST NAME',
-                                        controller: firstnameController),
-                                    const SizedBox(
-                                      width: 15,
-                                    ),
-                                    TextFieldWidget(
-                                        isPassword: false,
-                                        padding: 2.5,
-                                        width: 50,
-                                        height: 35,
-                                        label: 'MI',
-                                        controller: middlenameController),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                TextFieldWidget(
-                                    width: 217,
-                                    height: 35,
-                                    label: 'LAST NAME',
-                                    controller: lastnameController),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            ButtonWidget(
-                              height: 35,
-                              radius: 0,
-                              width: 217,
-                              fontSize: 10,
-                              color: Colors.red[300],
-                              label: !inEdit ? 'UPLOAD ID' : 'DELETE USER',
-                              onPressed: () {
-                                if (inEdit) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: TextBold(
-                                            text: 'Delete Confirmation',
-                                            fontSize: 16,
-                                            color: Colors.black),
-                                        content: TextRegular(
-                                            text:
-                                                'Are you sure you want to delete this user?',
-                                            fontSize: 14,
-                                            color: Colors.grey),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: TextRegular(
-                                                  text: 'Close',
-                                                  fontSize: 14,
-                                                  color: Colors.grey)),
-                                          TextButton(
-                                              onPressed: () async {
-                                                await FirebaseFirestore.instance
-                                                    .collection('Members')
-                                                    .doc(data.id)
-                                                    .delete();
-
-                                                Navigator.pop(context);
-                                                Navigator.pop(context);
-                                              },
-                                              child: TextRegular(
-                                                  text: 'Continue',
-                                                  fontSize: 14,
-                                                  color: Colors.black))
-                                        ],
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  InputElement input = FileUploadInputElement()
-                                      as InputElement
-                                    ..accept = 'image/*';
-                                  FirebaseStorage fs = FirebaseStorage.instance;
-                                  input.click();
-                                  input.onChange.listen((event) {
-                                    final file = input.files!.first;
-                                    final reader = FileReader();
-                                    reader.readAsDataUrl(file);
-                                    reader.onLoadEnd.listen((event) async {
-                                      var snapshot = await fs
-                                          .ref()
-                                          .child('newfile')
-                                          .putBlob(file);
-                                      String downloadUrl =
-                                          await snapshot.ref.getDownloadURL();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: TextRegular(
-                                                  text:
-                                                      'ID Uploaded Succesfully!',
-                                                  fontSize: 14,
-                                                  color: Colors.white)));
-
-                                      setState(() {
-                                        imgUrl2 = downloadUrl;
-
-                                        isUploaded = true;
-                                      });
                                     });
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextFieldWidget(
+                                  width: 175,
+                                  height: 35,
+                                  label: 'DATE AND PLACE OF BIRTH',
+                                  controller: birthdateController),
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              TextFieldWidget(
+                                  width: 175,
+                                  height: 35,
+                                  label: 'NATIONALITY',
+                                  controller: nationalityController),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFieldWidget(
+                              width: 365,
+                              label: 'SOURCE OF FUNDS',
+                              controller: fundsSourceController),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFieldWidget(
+                              width: 365,
+                              height: 35,
+                              label: 'PRESENT ADDRESS',
+                              controller: presentAddress),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFieldWidget(
+                              width: 365,
+                              height: 35,
+                              label: 'PERMANENT ADDRESS',
+                              controller: permanentAddress),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFieldWidget(
+                              width: 365,
+                              height: 35,
+                              label:
+                                  'NAME OF WORK & NAME OF\nEMPLOYER/NATURE OF SELF EMPLOYMENT',
+                              controller: natureworkController),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFieldWidget(
+                              width: 365,
+                              height: 35,
+                              label: 'CONTACT NUMBER',
+                              controller: contactnumberController),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFieldWidget(
+                              width: 365,
+                              height: 35,
+                              label: 'TIN, SSS NUMBER/GSIS NUMBER',
+                              controller: numberController),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFieldWidget(
+                              width: 365,
+                              height: 35,
+                              label: 'NAMES OF BENEFICIARIES',
+                              controller: bennameController),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          ButtonWidget(
+                            fontColor: Colors.white,
+                            height: 45,
+                            radius: 0,
+                            width: 275,
+                            fontSize: 10,
+                            color: Colors.blue,
+                            label: inEdit ? 'EDIT' : 'ADD USER',
+                            onPressed: () async {
+                              int membersLength = 0;
+                              if (_validateFields()) {
+                                if (inEdit) {
+                                  await FirebaseFirestore.instance
+                                      .collection('Members')
+                                      .doc(data.id)
+                                      .update({
+                                    'firstName': firstnameController.text,
+                                    'lastName': lastnameController.text,
+                                    'middleInitial': middlenameController.text,
+                                    'brithdate': birthdateController.text,
+                                    'status': nationalityController.text,
+                                    'address': presentAddress.text,
+                                    'id': data.id,
+                                    'photo': imgUrl,
+                                    'idPhoto': imgUrl2,
                                   });
+                                } else {
+                                  await FirebaseFirestore.instance
+                                      .collection('Members')
+                                      .get()
+                                      .then((value) {
+                                    setState(
+                                      () {
+                                        membersLength = value.docs.length;
+                                      },
+                                    );
+                                  });
+
+                                  // addMember(
+                                  //     firstnameController.text,
+                                  //     lastnameController.text,
+                                  //     middlenameController.text,
+                                  //     birthdateController.text,
+                                  //     statusController.text,
+                                  //     addressController.text,
+                                  //     membersLength.toString(),
+                                  //     imgUrl,
+                                  //     incomeSourceController.text,
+                                  //     imgUrl2);
                                 }
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            TextFieldWidget(
-                                width: 175,
-                                height: 35,
-                                label: 'BIRTHDATE',
-                                controller: birthdateController),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            TextFieldWidget(
-                                width: 175,
-                                height: 35,
-                                label: 'STATUS',
-                                controller: statusController),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextFieldWidget(
-                            width: 365,
-                            label: 'SOURCE OF INCOME',
-                            controller: incomeSourceController),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextFieldWidget(
-                            maxLine: 5,
-                            width: 365,
-                            height: 100,
-                            label: 'ADDRESS',
-                            controller: addressController),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        ButtonWidget(
-                          fontColor: Colors.white,
-                          height: 45,
-                          radius: 0,
-                          width: 275,
-                          fontSize: 10,
-                          color: Colors.blue,
-                          label: inEdit ? 'EDIT' : 'ADD USER',
-                          onPressed: () async {
-                            int membersLength = 0;
-                            if (_validateFields()) {
-                              if (inEdit) {
-                                await FirebaseFirestore.instance
-                                    .collection('Members')
-                                    .doc(data.id)
-                                    .update({
-                                  'firstName': firstnameController.text,
-                                  'lastName': lastnameController.text,
-                                  'middleInitial': middlenameController.text,
-                                  'brithdate': birthdateController.text,
-                                  'status': statusController.text,
-                                  'address': addressController.text,
-                                  'id': data.id,
-                                  'photo': imgUrl,
-                                  'idPhoto': imgUrl2,
-                                });
-                              } else {
-                                await FirebaseFirestore.instance
-                                    .collection('Members')
-                                    .get()
-                                    .then((value) {
-                                  setState(
-                                    () {
-                                      membersLength = value.docs.length;
-                                    },
-                                  );
-                                });
 
-                                addMember(
-                                    firstnameController.text,
-                                    lastnameController.text,
-                                    middlenameController.text,
-                                    birthdateController.text,
-                                    statusController.text,
-                                    addressController.text,
-                                    membersLength.toString(),
-                                    imgUrl,
-                                    incomeSourceController.text,
-                                    imgUrl2);
+                                firstnameController.clear();
+                                lastnameController.clear();
+                                middlenameController.clear();
+                                birthdateController.clear();
+                                nationalityController.clear();
+                                presentAddress.clear();
+                                Navigator.pop(context);
                               }
-
-                              firstnameController.clear();
-                              lastnameController.clear();
-                              middlenameController.clear();
-                              birthdateController.clear();
-                              statusController.clear();
-                              addressController.clear();
-                              Navigator.pop(context);
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -1028,13 +1077,13 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
     if (birthdateController.text == "") {
       errMsg = "Birth Date is required.";
     }
-    if (statusController.text == "") {
+    if (nationalityController.text == "") {
       errMsg = "Status is required.";
     }
-    if (addressController.text == "") {
+    if (presentAddress.text == "") {
       errMsg = "Address is required.";
     }
-    if (incomeSourceController.text == "") {
+    if (fundsSourceController.text == "") {
       errMsg = "Source of Income is required.";
     }
 
