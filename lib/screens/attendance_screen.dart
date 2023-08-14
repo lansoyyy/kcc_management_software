@@ -63,7 +63,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         Container(
                           height: 50,
                           width: 150,
-                          color: Colors.black,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                                image:
+                                    AssetImage('assets/images/Asset 8@4x.png')),
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(right: 100),

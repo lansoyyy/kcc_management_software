@@ -28,16 +28,14 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Container(
                 width: double.infinity,
                 height: 250,
-                decoration: const BoxDecoration(color: Colors.black),
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage('assets/images/Asset 8@4x.png')),
+                ),
               ),
             ),
             const SizedBox(
               height: 10,
-            ),
-            TextBold(
-              text: 'KCC',
-              fontSize: 50,
-              color: Colors.black,
             ),
             TextBold(
               text: 'Membership Software',
@@ -64,8 +62,8 @@ class _LoginScreenState extends State<LoginScreen> {
               fontColor: Colors.white,
               label: 'LOGIN',
               onPressed: () {
-                if (usernameController.text == 'admin-username' &&
-                    passwordController.text == 'admin-password') {
+                if (usernameController.text == 'kcc-username' &&
+                    passwordController.text == 'kcc-password') {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const PlayerListScreen()));
                 } else {
