@@ -24,7 +24,7 @@ Future addMember(
     'middleInitial': middleInitial,
     'brithdate': brithdate,
     'nationality': nationality,
-    'address': presentAddress,
+    'presentAddress': presentAddress,
     'permanentAddress': permanentAddress,
     'id': docUser.id,
     'dateTime': DateTime.now(),

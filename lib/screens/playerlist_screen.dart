@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'package:kcc_management_software/services/add_member.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
@@ -572,9 +573,15 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
         lastnameController.text = data['lastName'];
         middlenameController.text = data['middleInitial'];
         birthdateController.text = data['brithdate'];
-        nationalityController.text = data['status'];
+        nationalityController.text = data['nationality'];
         presentAddress.text = data['address'];
-        fundsSourceController.text = data['incomeSource'];
+        permanentAddress.text = data['permanentAddress'];
+        fundsSourceController.text = data['fundsSource'];
+
+        natureworkController.text = data['nature'];
+        contactnumberController.text = data['contactNumber'];
+        numberController.text = data['number'];
+        bennameController.text = data['benNames'];
 
         imgUrl = data['photo'];
 
@@ -609,128 +616,134 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                         ),
                       ),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              imgUrl != '' || inEdit
-                                  ? Container(
-                                      height: 175,
-                                      width: 150,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            image: NetworkImage(
-                                              imgUrl,
-                                            ),
-                                            fit: BoxFit.cover),
-                                        border: Border.all(
-                                          color: Colors.grey,
-                                        ),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    )
-                                  : Container(
-                                      height: 175,
-                                      width: 150,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: Colors.grey,
-                                        ),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              inEdit
-                                  ? ButtonWidget(
-                                      height: 40,
-                                      radius: 10,
-                                      width: 125,
-                                      fontSize: 10,
-                                      color: Colors.grey[300],
-                                      label: 'VIEW ID',
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              content: Container(
-                                                height: 250,
-                                                width: 250,
-                                                decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                    image: NetworkImage(
-                                                      imgUrl2,
-                                                    ),
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
+                          Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                imgUrl != '' || inEdit
+                                    ? Container(
+                                        height: 175,
+                                        width: 150,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              image: NetworkImage(
+                                                imgUrl,
                                               ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: TextBold(
-                                                    text: 'Close',
-                                                    fontSize: 14,
-                                                    color: Colors.black,
+                                              fit: BoxFit.cover),
+                                          border: Border.all(
+                                            color: Colors.grey,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                      )
+                                    : Container(
+                                        height: 175,
+                                        width: 150,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.grey,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                inEdit
+                                    ? ButtonWidget(
+                                        height: 40,
+                                        radius: 10,
+                                        width: 125,
+                                        fontSize: 10,
+                                        color: Colors.grey[300],
+                                        label: 'VIEW ID',
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                content: Container(
+                                                  height: 250,
+                                                  width: 250,
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: NetworkImage(
+                                                        imgUrl2,
+                                                      ),
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   ),
                                                 ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                    )
-                                  : ButtonWidget(
-                                      height: 40,
-                                      radius: 10,
-                                      width: 125,
-                                      fontSize: 10,
-                                      color: Colors.grey[300],
-                                      label: 'UPLOAD',
-                                      onPressed: () {
-                                        InputElement input =
-                                            FileUploadInputElement()
-                                                as InputElement
-                                              ..accept = 'image/*';
-                                        FirebaseStorage fs =
-                                            FirebaseStorage.instance;
-                                        input.click();
-                                        input.onChange.listen((event) {
-                                          final file = input.files!.first;
-                                          final reader = FileReader();
-                                          reader.readAsDataUrl(file);
-                                          reader.onLoadEnd
-                                              .listen((event) async {
-                                            var snapshot = await fs
-                                                .ref()
-                                                .child('newfile')
-                                                .putBlob(file);
-                                            String downloadUrl = await snapshot
-                                                .ref
-                                                .getDownloadURL();
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(
-                                                    content: TextRegular(
-                                                        text:
-                                                            'Photo Uploaded Succesfully!',
-                                                        fontSize: 14,
-                                                        color: Colors.white)));
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: TextBold(
+                                                      text: 'Close',
+                                                      fontSize: 14,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                      )
+                                    : ButtonWidget(
+                                        height: 40,
+                                        radius: 10,
+                                        width: 125,
+                                        fontSize: 10,
+                                        color: Colors.grey[300],
+                                        label: 'UPLOAD',
+                                        onPressed: () {
+                                          InputElement input =
+                                              FileUploadInputElement()
+                                                  as InputElement
+                                                ..accept = 'image/*';
+                                          FirebaseStorage fs =
+                                              FirebaseStorage.instance;
+                                          input.click();
+                                          input.onChange.listen((event) {
+                                            final file = input.files!.first;
+                                            final reader = FileReader();
+                                            reader.readAsDataUrl(file);
+                                            reader.onLoadEnd
+                                                .listen((event) async {
+                                              var snapshot = await fs
+                                                  .ref()
+                                                  .child('newfile')
+                                                  .putBlob(file);
+                                              String downloadUrl =
+                                                  await snapshot.ref
+                                                      .getDownloadURL();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      content: TextRegular(
+                                                          text:
+                                                              'Photo Uploaded Succesfully!',
+                                                          fontSize: 14,
+                                                          color:
+                                                              Colors.white)));
 
-                                            setState(() {
-                                              imgUrl = downloadUrl;
+                                              setState(() {
+                                                imgUrl = downloadUrl;
 
-                                              isUploaded = true;
+                                                isUploaded = true;
+                                              });
                                             });
                                           });
-                                        });
-                                      },
-                                    ),
-                            ],
+                                        },
+                                      ),
+                              ],
+                            ),
                           ),
                           const SizedBox(
                             width: 10,
@@ -738,7 +751,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                           Column(
                             children: [
                               Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Row(
@@ -1032,6 +1045,23 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                   //     imgUrl,
                                   //     incomeSourceController.text,
                                   //     imgUrl2);
+                                  addMember(
+                                      firstName: firstnameController.text,
+                                      lastName: lastnameController.text,
+                                      middleInitial: middlenameController.text,
+                                      brithdate: birthdateController.text,
+                                      nationality: nationalityController.text,
+                                      presentAddress: presentAddress.text,
+                                      id: membersLength.toString(),
+                                      photo: imgUrl,
+                                      fundsSource: fundsSourceController.text,
+                                      idPhoto: imgUrl2,
+                                      permanentAddress: permanentAddress.text,
+                                      nature: natureworkController.text,
+                                      number: numberController.text,
+                                      contactNumber:
+                                          contactnumberController.text,
+                                      benNames: bennameController.text);
                                 }
 
                                 firstnameController.clear();
@@ -1040,6 +1070,18 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                 birthdateController.clear();
                                 nationalityController.clear();
                                 presentAddress.clear();
+
+                                permanentAddress.clear();
+
+                                fundsSourceController.clear();
+
+                                natureworkController.clear();
+
+                                contactnumberController.clear();
+
+                                numberController.clear();
+
+                                bennameController.clear();
                                 Navigator.pop(context);
                               }
                             },
@@ -1085,6 +1127,22 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
     }
     if (fundsSourceController.text == "") {
       errMsg = "Source of Income is required.";
+    }
+    if (permanentAddress.text == "") {
+      errMsg = "Permanent Address is required.";
+    }
+    if (natureworkController.text == "") {
+      errMsg = "Nature of Work is required.";
+    }
+
+    if (contactnumberController.text == "") {
+      errMsg = "Contact Number is required.";
+    }
+    if (numberController.text == "") {
+      errMsg = "TIN/SSS/GSIS Number is required.";
+    }
+    if (bennameController.text == "") {
+      errMsg = "Beneficiary Name is required.";
     }
 
     if (imgUrl == '') {
