@@ -103,7 +103,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
-                          height: 37.5,
+                          height: 40,
                           width: 250,
                           decoration: BoxDecoration(
                               border: Border.all(
@@ -118,16 +118,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                   nameSearched = value;
                                 });
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                   border: InputBorder.none,
-                                  label: TextRegular(
-                                    text: 'Search User',
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                  hintStyle: const TextStyle(
+                                  hintText: 'Search ID of User',
+                                  hintStyle: TextStyle(
                                       fontFamily: 'QRegular', fontSize: 12),
-                                  suffixIcon: const Icon(
+                                  suffixIcon: Icon(
                                     Icons.search,
                                     color: Colors.grey,
                                   )),
@@ -190,10 +186,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       child: StreamBuilder<QuerySnapshot>(
                           stream: FirebaseFirestore.instance
                               .collection('Members')
-                              .where('firstName',
+                              .where('id',
                                   isGreaterThanOrEqualTo:
                                       toBeginningOfSentenceCase(nameSearched))
-                              .where('firstName',
+                              .where('id',
                                   isLessThan:
                                       '${toBeginningOfSentenceCase(nameSearched)}z')
                               .snapshots(),

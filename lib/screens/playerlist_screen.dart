@@ -43,6 +43,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
   bool filter = true;
 
   bool isUploaded = false;
+  bool isUploaded1 = false;
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +116,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
-                          height: 37.5,
+                          height: 40,
                           width: 250,
                           decoration: BoxDecoration(
                               border: Border.all(
@@ -130,16 +131,12 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                   nameSearched = value;
                                 });
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                   border: InputBorder.none,
-                                  label: TextRegular(
-                                    text: 'Search User',
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                  hintStyle: const TextStyle(
+                                  hintText: 'Search ID of User',
+                                  hintStyle: TextStyle(
                                       fontFamily: 'QRegular', fontSize: 12),
-                                  suffixIcon: const Icon(
+                                  suffixIcon: Icon(
                                     Icons.search,
                                     color: Colors.grey,
                                   )),
@@ -286,10 +283,10 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                       child: StreamBuilder<QuerySnapshot>(
                           stream: FirebaseFirestore.instance
                               .collection('Members')
-                              .where('firstName',
+                              .where('id',
                                   isGreaterThanOrEqualTo:
                                       toBeginningOfSentenceCase(nameSearched))
-                              .where('firstName',
+                              .where('id',
                                   isLessThan:
                                       '${toBeginningOfSentenceCase(nameSearched)}z')
                               .where('isActive', isEqualTo: filter)
@@ -330,11 +327,27 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                       title: Padding(
                                         padding:
                                             const EdgeInsets.only(left: 30),
-                                        child: TextRegular(
-                                          text:
-                                              '${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}',
-                                          fontSize: 18,
-                                          color: Colors.grey,
+                                        child: SizedBox(
+                                          width: 150,
+                                          child: Row(
+                                            children: [
+                                              TextRegular(
+                                                text:
+                                                    '${data.docs[index]['id']}',
+                                                fontSize: 18,
+                                                color: Colors.grey,
+                                              ),
+                                              const SizedBox(
+                                                width: 25,
+                                              ),
+                                              TextRegular(
+                                                text:
+                                                    '${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}',
+                                                fontSize: 18,
+                                                color: Colors.grey,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                       trailing: SizedBox(
@@ -827,92 +840,208 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                               const SizedBox(
                                 height: 20,
                               ),
-                              ButtonWidget(
-                                height: 35,
-                                radius: 0,
-                                width: 217,
-                                fontSize: 10,
-                                color: Colors.red[300],
-                                label: !inEdit ? 'UPLOAD ID' : 'DELETE USER',
-                                onPressed: () {
-                                  if (inEdit) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: TextBold(
-                                              text: 'Delete Confirmation',
-                                              fontSize: 16,
-                                              color: Colors.black),
-                                          content: TextRegular(
-                                              text:
-                                                  'Are you sure you want to delete this user?',
-                                              fontSize: 14,
-                                              color: Colors.grey),
-                                          actions: [
-                                            TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: TextRegular(
-                                                    text: 'Close',
-                                                    fontSize: 14,
-                                                    color: Colors.grey)),
-                                            TextButton(
-                                                onPressed: () async {
-                                                  await FirebaseFirestore
-                                                      .instance
-                                                      .collection('Members')
-                                                      .doc(data.id)
-                                                      .delete();
+                              isUploaded1
+                                  ? Row(
+                                      children: [
+                                        ButtonWidget(
+                                          height: 35,
+                                          radius: 0,
+                                          width: 175,
+                                          fontSize: 10,
+                                          color: Colors.red[300],
+                                          label: !inEdit
+                                              ? 'UPLOAD ID'
+                                              : 'DELETE USER',
+                                          onPressed: () {
+                                            if (inEdit) {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    title: TextBold(
+                                                        text:
+                                                            'Delete Confirmation',
+                                                        fontSize: 16,
+                                                        color: Colors.black),
+                                                    content: TextRegular(
+                                                        text:
+                                                            'Are you sure you want to delete this user?',
+                                                        fontSize: 14,
+                                                        color: Colors.grey),
+                                                    actions: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: TextRegular(
+                                                              text: 'Close',
+                                                              fontSize: 14,
+                                                              color:
+                                                                  Colors.grey)),
+                                                      TextButton(
+                                                          onPressed: () async {
+                                                            await FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'Members')
+                                                                .doc(data.id)
+                                                                .delete();
 
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
+                                                            Navigator.pop(
+                                                                context);
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: TextRegular(
+                                                              text: 'Continue',
+                                                              fontSize: 14,
+                                                              color:
+                                                                  Colors.black))
+                                                    ],
+                                                  );
                                                 },
-                                                child: TextRegular(
-                                                    text: 'Continue',
-                                                    fontSize: 14,
-                                                    color: Colors.black))
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  } else {
-                                    InputElement input =
-                                        FileUploadInputElement() as InputElement
-                                          ..accept = 'image/*';
-                                    FirebaseStorage fs =
-                                        FirebaseStorage.instance;
-                                    input.click();
-                                    input.onChange.listen((event) {
-                                      final file = input.files!.first;
-                                      final reader = FileReader();
-                                      reader.readAsDataUrl(file);
-                                      reader.onLoadEnd.listen((event) async {
-                                        var snapshot = await fs
-                                            .ref()
-                                            .child('newfile')
-                                            .putBlob(file);
-                                        String downloadUrl =
-                                            await snapshot.ref.getDownloadURL();
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
+                                              );
+                                            } else {
+                                              InputElement input =
+                                                  FileUploadInputElement()
+                                                      as InputElement
+                                                    ..accept = 'image/*';
+                                              FirebaseStorage fs =
+                                                  FirebaseStorage.instance;
+                                              input.click();
+                                              input.onChange.listen((event) {
+                                                final file = input.files!.first;
+                                                final reader = FileReader();
+                                                reader.readAsDataUrl(file);
+                                                reader.onLoadEnd
+                                                    .listen((event) async {
+                                                  var snapshot = await fs
+                                                      .ref()
+                                                      .child('newfile')
+                                                      .putBlob(file);
+                                                  String downloadUrl =
+                                                      await snapshot.ref
+                                                          .getDownloadURL();
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          content: TextRegular(
+                                                              text:
+                                                                  'ID Uploaded Succesfully!',
+                                                              fontSize: 14,
+                                                              color: Colors
+                                                                  .white)));
+
+                                                  setState(() {
+                                                    imgUrl2 = downloadUrl;
+
+                                                    isUploaded1 = true;
+                                                  });
+                                                });
+                                              });
+                                            }
+                                          },
+                                        ),
+                                        IconButton(
+                                          onPressed: () {},
+                                          icon: const Icon(
+                                            Icons.remove_red_eye,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : ButtonWidget(
+                                      height: 35,
+                                      radius: 0,
+                                      width: 217,
+                                      fontSize: 10,
+                                      color: Colors.red[300],
+                                      label:
+                                          !inEdit ? 'UPLOAD ID' : 'DELETE USER',
+                                      onPressed: () {
+                                        if (inEdit) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: TextBold(
+                                                    text: 'Delete Confirmation',
+                                                    fontSize: 16,
+                                                    color: Colors.black),
                                                 content: TextRegular(
                                                     text:
-                                                        'ID Uploaded Succesfully!',
+                                                        'Are you sure you want to delete this user?',
                                                     fontSize: 14,
-                                                    color: Colors.white)));
+                                                    color: Colors.grey),
+                                                actions: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: TextRegular(
+                                                          text: 'Close',
+                                                          fontSize: 14,
+                                                          color: Colors.grey)),
+                                                  TextButton(
+                                                      onPressed: () async {
+                                                        await FirebaseFirestore
+                                                            .instance
+                                                            .collection(
+                                                                'Members')
+                                                            .doc(data.id)
+                                                            .delete();
 
-                                        setState(() {
-                                          imgUrl2 = downloadUrl;
+                                                        Navigator.pop(context);
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: TextRegular(
+                                                          text: 'Continue',
+                                                          fontSize: 14,
+                                                          color: Colors.black))
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        } else {
+                                          InputElement input =
+                                              FileUploadInputElement()
+                                                  as InputElement
+                                                ..accept = 'image/*';
+                                          FirebaseStorage fs =
+                                              FirebaseStorage.instance;
+                                          input.click();
+                                          input.onChange.listen((event) {
+                                            final file = input.files!.first;
+                                            final reader = FileReader();
+                                            reader.readAsDataUrl(file);
+                                            reader.onLoadEnd
+                                                .listen((event) async {
+                                              var snapshot = await fs
+                                                  .ref()
+                                                  .child('newfile')
+                                                  .putBlob(file);
+                                              String downloadUrl =
+                                                  await snapshot.ref
+                                                      .getDownloadURL();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      content: TextRegular(
+                                                          text:
+                                                              'ID Uploaded Succesfully!',
+                                                          fontSize: 14,
+                                                          color:
+                                                              Colors.white)));
 
-                                          isUploaded = true;
-                                        });
-                                      });
-                                    });
-                                  }
-                                },
-                              ),
+                                              setState(() {
+                                                imgUrl2 = downloadUrl;
+
+                                                isUploaded1 = true;
+                                              });
+                                            });
+                                          });
+                                        }
+                                      },
+                                    ),
                             ],
                           ),
                         ],
