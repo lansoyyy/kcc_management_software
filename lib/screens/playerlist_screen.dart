@@ -14,6 +14,8 @@ import 'package:kcc_management_software/widgets/toast_widget.dart';
 import 'package:printing/printing.dart';
 import 'dart:io' as io;
 
+import 'package:url_launcher/url_launcher.dart';
+
 class PlayerListScreen extends StatefulWidget {
   const PlayerListScreen({super.key});
 
@@ -944,7 +946,15 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                           },
                                         ),
                                         IconButton(
-                                          onPressed: () {},
+                                          onPressed: () async {
+                                            print(imgUrl2);
+                                            try {
+                                              await launchUrl(
+                                                  Uri.parse(imgUrl2));
+                                            } catch (e) {
+                                              print(e);
+                                            }
+                                          },
                                           icon: const Icon(
                                             Icons.remove_red_eye,
                                           ),
