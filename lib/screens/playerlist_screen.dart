@@ -906,7 +906,8 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                               InputElement input =
                                                   FileUploadInputElement()
                                                       as InputElement
-                                                    ..accept = 'file/*';
+                                                    ..accept =
+                                                        "file_extension|audio/*|video/*|image/*|media_type";
                                               FirebaseStorage fs =
                                                   FirebaseStorage.instance;
                                               input.click();
@@ -956,8 +957,9 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                       width: 217,
                                       fontSize: 10,
                                       color: Colors.red[300],
-                                      label:
-                                          !inEdit ? 'UPLOAD ID' : 'DELETE USER',
+                                      label: !inEdit
+                                          ? 'UPLOAD FILE'
+                                          : 'DELETE USER',
                                       onPressed: () {
                                         if (inEdit) {
                                           showDialog(
@@ -1006,7 +1008,8 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                           InputElement input =
                                               FileUploadInputElement()
                                                   as InputElement
-                                                ..accept = 'image/*';
+                                                ..accept =
+                                                    "file_extension|audio/*|video/*|image/*|media_type";
                                           FirebaseStorage fs =
                                               FirebaseStorage.instance;
                                           input.click();
