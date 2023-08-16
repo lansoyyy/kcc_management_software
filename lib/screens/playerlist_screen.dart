@@ -578,7 +578,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
         middlenameController.text = data['middleInitial'];
         birthdateController.text = data['brithdate'];
         nationalityController.text = data['nationality'];
-        presentAddress.text = data['address'];
+        presentAddress.text = data['presentAddress'];
         permanentAddress.text = data['permanentAddress'];
         fundsSourceController.text = data['fundsSource'];
 
