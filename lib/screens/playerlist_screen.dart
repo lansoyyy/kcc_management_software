@@ -850,7 +850,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                           fontSize: 10,
                                           color: Colors.red[300],
                                           label: !inEdit
-                                              ? 'UPLOAD ID'
+                                              ? 'UPLOAD FILE'
                                               : 'DELETE USER',
                                           onPressed: () {
                                             if (inEdit) {
@@ -906,7 +906,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                               InputElement input =
                                                   FileUploadInputElement()
                                                       as InputElement
-                                                    ..accept = 'image/*';
+                                                    ..accept = 'file/*';
                                               FirebaseStorage fs =
                                                   FirebaseStorage.instance;
                                               input.click();
