@@ -433,7 +433,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       tableData.add([
         tableDataList[i]['id'],
         '${tableDataList[i]['firstName']} ${tableDataList[i]['middleInitial']}. ${tableDataList[i]['lastName']}',
-        tableDataList[i]['isActive'] ? 'Active' : 'Inactive',
+        tableDataList[i]['isActive'] ? 'Active' : 'Flagged',
       ]);
     }
 
