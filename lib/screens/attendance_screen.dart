@@ -27,6 +27,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   final statusController = TextEditingController();
   final addressController = TextEditingController();
 
+  int day = DateTime.now().day;
+  int month = DateTime.now().month;
+  int year = DateTime.now().year;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,6 +81,15 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                               TextBold(
                                 text: 'ATTENDANCE',
                                 fontSize: 24,
+                                color: Colors.grey,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              TextRegular(
+                                text:
+                                    '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}',
+                                fontSize: 14,
                                 color: Colors.grey,
                               ),
                             ],
@@ -311,19 +324,42 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     const SizedBox(
                       height: 10,
                     ),
-                    TextBold(
-                      text: 'Active Players',
-                      fontSize: 18,
-                      color: Colors.black,
-                    ),
-                    TextRegular(
-                      text:
-                          '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}',
-                      fontSize: 14,
-                      color: Colors.grey,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextBold(
+                          text: 'Active Players',
+                          fontSize: 18,
+                          color: Colors.black,
+                        ),
+                        ButtonWidget(
+                          height: 40,
+                          radius: 10,
+                          width: 100,
+                          fontSize: 10,
+                          color: Colors.grey[300],
+                          label: '$month/$day/$year',
+                          onPressed: () async {
+                            final DateTime? selectedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime(2100),
+                            );
+
+                            if (selectedDate != null) {
+                              setState(() {
+                                day = selectedDate.day;
+                                month = selectedDate.month;
+                                year = selectedDate.year;
+                              });
+                            }
+                          },
+                        ),
+                      ],
                     ),
                     const SizedBox(
-                      height: 5,
+                      height: 10,
                     ),
                     Container(
                       height: 275,
@@ -337,9 +373,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       child: StreamBuilder<QuerySnapshot>(
                           stream: FirebaseFirestore.instance
                               .collection('Attendance')
-                              .where('month', isEqualTo: DateTime.now().month)
-                              .where('year', isEqualTo: DateTime.now().year)
-                              .where('day', isEqualTo: DateTime.now().day)
+                              .where('month', isEqualTo: month)
+                              .where('year', isEqualTo: year)
+                              .where('day', isEqualTo: day)
                               .snapshots(),
                           builder: (BuildContext context,
                               AsyncSnapshot<QuerySnapshot> snapshot) {
