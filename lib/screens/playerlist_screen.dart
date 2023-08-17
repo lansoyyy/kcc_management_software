@@ -39,6 +39,9 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
   final contactnumberController = TextEditingController();
   final numberController = TextEditingController();
   final bennameController = TextEditingController();
+  final placebirthController = TextEditingController();
+  final employeerController = TextEditingController();
+  final workController = TextEditingController();
 
   int dropValue = 0;
 
@@ -588,6 +591,10 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
   addMemberDialog(bool inEdit, data) {
     if (inEdit) {
       setState(() {
+        final placebirthController = TextEditingController();
+        final employeerController = TextEditingController();
+        final workController = TextEditingController();
+
         firstnameController.text = data['firstName'];
         lastnameController.text = data['lastName'];
         middlenameController.text = data['middleInitial'];
@@ -596,6 +603,9 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
         presentAddress.text = data['presentAddress'];
         permanentAddress.text = data['permanentAddress'];
         fundsSourceController.text = data['fundsSource'];
+        placebirthController.text = data['placeBirth'];
+          employeerController.text = data['employeer'];
+            workController.text = data['work'];
 
         natureworkController.text = data['nature'];
         contactnumberController.text = data['contactNumber'];
@@ -1071,7 +1081,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                               TextFieldWidget(
                                   width: 175,
                                   height: 35,
-                                  label: 'DATE AND PLACE OF BIRTH',
+                                  label: 'DATE OF BIRTH',
                                   controller: birthdateController),
                               const SizedBox(
                                 width: 15,
@@ -1083,6 +1093,13 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                   controller: nationalityController),
                             ],
                           ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFieldWidget(
+                              width: 365,
+                              label: 'PLACE OF BIRTH',
+                              controller: placebirthController),
                           const SizedBox(
                             height: 10,
                           ),
@@ -1112,8 +1129,23 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                           TextFieldWidget(
                               width: 365,
                               height: 35,
-                              label:
-                                  'NAME OF WORK & NAME OF\nEMPLOYER/NATURE OF SELF EMPLOYMENT',
+                              label: 'NAME OF WORK',
+                              controller: workController),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFieldWidget(
+                              width: 365,
+                              height: 35,
+                              label: 'NAME OF EMPLOYEER',
+                              controller: employeerController),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFieldWidget(
+                              width: 365,
+                              height: 35,
+                              label: 'NATURE OF WORK',
                               controller: natureworkController),
                           const SizedBox(
                             height: 10,
@@ -1158,15 +1190,25 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                       .collection('Members')
                                       .doc(data.id)
                                       .update({
+                                    'employeer': employeerController.text,
+                                    'work': workController.text,
+                                    'nature': natureworkController.text,
                                     'firstName': firstnameController.text,
                                     'lastName': lastnameController.text,
                                     'middleInitial': middlenameController.text,
                                     'brithdate': birthdateController.text,
-                                    'status': nationalityController.text,
-                                    'address': presentAddress.text,
+                                    'placeBirth': placebirthController.text,
+                                    'fundsSource': fundsSourceController.text,
+                                    'contactNumber':
+                                        contactnumberController.text,
+                                    'number': numberController.text,
+                                    'nationality': nationalityController.text,
+                                    'presentAddress': presentAddress.text,
+                                    'permanentAddress': permanentAddress.text,
                                     'id': data.id,
                                     'photo': imgUrl,
                                     'idPhoto': imgUrl2,
+                                    'benNames': bennameController.text
                                   });
                                 } else {
                                   await FirebaseFirestore.instance
@@ -1192,6 +1234,9 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                   //     incomeSourceController.text,
                                   //     imgUrl2);
                                   addMember(
+                                      work: workController.text,
+                                      employeer: employeerController.text,
+                                      placeBirth: placebirthController.text,
                                       firstName: firstnameController.text,
                                       lastName: lastnameController.text,
                                       middleInitial: middlenameController.text,

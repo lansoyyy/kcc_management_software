@@ -13,12 +13,17 @@ Future addMember(
     required String idPhoto,
     required String permanentAddress,
     required String nature,
+    required String employeer,
+    required String work,
     required String number,
     required String contactNumber,
-    required String benNames}) async {
+    required String benNames,
+    required String placeBirth}) async {
   final docUser = FirebaseFirestore.instance.collection('Members').doc(id);
 
   final json = {
+    'employeer': employeer,
+    'work': work,
     'firstName': firstName,
     'lastName': lastName,
     'middleInitial': middleInitial,
@@ -35,7 +40,8 @@ Future addMember(
     'nature': nature,
     'number': number,
     'contactNumber': contactNumber,
-    'benNames': benNames
+    'benNames': benNames,
+    'placeBirth': placeBirth,
   };
 
   await docUser.set(json);
