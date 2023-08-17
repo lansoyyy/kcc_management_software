@@ -170,16 +170,46 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                               }
 
                               final data = snapshot.requireData;
-                              return ButtonWidget(
-                                height: 40,
-                                radius: 10,
-                                width: 100,
-                                fontSize: 10,
-                                color: Colors.grey[300],
-                                label: 'EXPORT',
-                                onPressed: () {
-                                  generatePdf(data.docs);
-                                },
+                              return Row(
+                                children: [
+                                  ButtonWidget(
+                                    height: 40,
+                                    radius: 10,
+                                    width: 100,
+                                    fontSize: 10,
+                                    color: Colors.grey[300],
+                                    label: 'EXPORT',
+                                    onPressed: () {
+                                      generatePdf(data.docs);
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  ButtonWidget(
+                                    height: 40,
+                                    radius: 10,
+                                    width: 100,
+                                    fontSize: 10,
+                                    color: Colors.grey[300],
+                                    label: 'Filter Export',
+                                    onPressed: () async {
+                                      DateTimeRange? result =
+                                          await showDateRangePicker(
+                                        context: context,
+                                        firstDate: DateTime(2000, 1,
+                                            1), // the earliest allowable
+                                        lastDate: DateTime(2050, 12,
+                                            31), // the latest allowable
+                                        currentDate: DateTime.now(),
+                                        saveText: 'Done',
+                                      );
+
+                                      print(result!.start);
+                                      print(result.end);
+                                    },
+                                  ),
+                                ],
                               );
                             }),
                       ],
