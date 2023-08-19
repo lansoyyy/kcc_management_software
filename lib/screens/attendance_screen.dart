@@ -30,6 +30,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   int day = DateTime.now().day;
   int month = DateTime.now().month;
   int year = DateTime.now().year;
+  DateTimeRange dateRangeFilter =
+      DateTimeRange(start: DateTime.now(), end: DateTime.now());
 
   @override
   Widget build(BuildContext context) {
@@ -148,9 +150,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         StreamBuilder<QuerySnapshot>(
                             stream: FirebaseFirestore.instance
                                 .collection('Attendance')
-                                .where('month', isEqualTo: DateTime.now().month)
-                                .where('year', isEqualTo: DateTime.now().year)
-                                .where('day', isEqualTo: DateTime.now().day)
+                                .where('dateTime',
+                                    isGreaterThanOrEqualTo:
+                                        dateRangeFilter.start)
+                                .where('dateTime',
+                                    isLessThanOrEqualTo: dateRangeFilter.end)
                                 .snapshots(),
                             builder: (BuildContext context,
                                 AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -207,6 +211,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                                       print(result!.start);
                                       print(result.end);
+                                      setState(() {
+                                        dateRangeFilter = result;
+                                      });
                                     },
                                   ),
                                 ],
@@ -326,10 +333,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                           color: Colors.grey,
                                         ),
                                       ),
-                                      trailing: SizedBox(
+                                      trailing: const SizedBox(
                                         width: 75,
                                         child: Row(
-                                          children: const [
+                                          children: [
                                             Icon(
                                               Icons.circle,
                                               color: Colors.white,
@@ -449,10 +456,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                           color: Colors.grey,
                                         ),
                                       ),
-                                      trailing: SizedBox(
+                                      trailing: const SizedBox(
                                         width: 75,
                                         child: Row(
-                                          children: const [
+                                          children: [
                                             Icon(
                                               Icons.circle,
                                               color: Colors.white,
