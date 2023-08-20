@@ -334,7 +334,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                           color: Colors.grey,
                                         ),
                                       ),
-                                      trailing: const SizedBox(
+                                      trailing: SizedBox(
                                         width: 75,
                                         child: Row(
                                           children: [
@@ -460,7 +460,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                           color: Colors.grey,
                                         ),
                                       ),
-                                      trailing: const SizedBox(
+                                      trailing: SizedBox(
                                         width: 75,
                                         child: Row(
                                           children: [
