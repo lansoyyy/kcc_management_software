@@ -329,12 +329,15 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                       trailing: SizedBox(
                                         width: 75,
                                         child: Row(
-                                          children: const [
+                                          children: [
                                             Icon(
                                               Icons.circle,
-                                              color: Colors.white,
+                                              color: data.docs[index]
+                                                      ['isActive']
+                                                  ? Colors.white
+                                                  : Colors.red,
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 20,
                                             ),
                                           ],
@@ -452,12 +455,15 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                       trailing: SizedBox(
                                         width: 75,
                                         child: Row(
-                                          children: const [
+                                          children: [
                                             Icon(
                                               Icons.circle,
-                                              color: Colors.white,
+                                              color: data.docs[index]
+                                                      ['isActive']
+                                                  ? Colors.white
+                                                  : Colors.red,
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 20,
                                             ),
                                           ],

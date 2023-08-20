@@ -49,6 +49,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
 
   bool isUploaded = false;
   bool isUploaded1 = false;
+  int newId = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -294,7 +295,9 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                               .where('id',
                                   isLessThan:
                                       '${toBeginningOfSentenceCase(nameSearched)}z')
+                              .orderBy('id', descending: false)
                               .where('isActive', isEqualTo: filter)
+                              .orderBy('dateTime', descending: false)
                               .snapshots(),
                           builder: (BuildContext context,
                               AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -604,8 +607,8 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
         permanentAddress.text = data['permanentAddress'];
         fundsSourceController.text = data['fundsSource'];
         placebirthController.text = data['placeBirth'];
-          employeerController.text = data['employeer'];
-            workController.text = data['work'];
+        employeerController.text = data['employeer'];
+        workController.text = data['work'];
 
         natureworkController.text = data['nature'];
         contactnumberController.text = data['contactNumber'];
@@ -780,16 +783,46 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                           Column(
                             children: [
                               Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Row(
                                     children: [
-                                      TextBold(
-                                        text: 'ID NUMBER',
-                                        fontSize: 18,
-                                        color: Colors.grey,
-                                      ),
+                                      StreamBuilder<QuerySnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('Members')
+                                              .snapshots(),
+                                          builder: (BuildContext context,
+                                              AsyncSnapshot<QuerySnapshot>
+                                                  snapshot) {
+                                            if (snapshot.hasError) {
+                                              print(snapshot.error);
+                                              return const Center(
+                                                  child: Text('Error'));
+                                            }
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 50),
+                                                child: Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                  color: Colors.black,
+                                                )),
+                                              );
+                                            }
+
+                                            final data = snapshot.requireData;
+                                            return TextBold(
+                                              text: inEdit
+                                                  ? ''
+                                                  : (data.docs.length)
+                                                      .toString(),
+                                              fontSize: 18,
+                                              color: Colors.grey,
+                                            );
+                                          }),
                                       const SizedBox(
                                         width: 10,
                                       ),
@@ -805,7 +838,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                         Icons.circle,
                                         color: inEdit
                                             ? data['isActive']
-                                                ? Colors.blue
+                                                ? Colors.white
                                                 : Colors.red
                                             : Colors.white,
                                       ),
@@ -1273,6 +1306,9 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                 numberController.clear();
 
                                 bennameController.clear();
+                                placebirthController.clear();
+                                workController.clear();
+                                employeerController.clear();
                                 Navigator.pop(context);
                               }
                             },
