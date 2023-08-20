@@ -9,6 +9,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'dart:io' as io;
 import '../services/add_attendance.dart';
+import 'package:pdf/pdf.dart';
 
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({super.key});
@@ -30,6 +31,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   int day = DateTime.now().day;
   int month = DateTime.now().month;
   int year = DateTime.now().year;
+  DateTimeRange dateRangeFilter =
+      DateTimeRange(start: DateTime.now(), end: DateTime.now());
 
   @override
   Widget build(BuildContext context) {
@@ -148,9 +151,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         StreamBuilder<QuerySnapshot>(
                             stream: FirebaseFirestore.instance
                                 .collection('Attendance')
-                                .where('month', isEqualTo: DateTime.now().month)
-                                .where('year', isEqualTo: DateTime.now().year)
-                                .where('day', isEqualTo: DateTime.now().day)
+                                .where('dateTime',
+                                    isGreaterThanOrEqualTo:
+                                        dateRangeFilter.start)
+                                .where('dateTime',
+                                    isLessThanOrEqualTo: dateRangeFilter.end)
                                 .snapshots(),
                             builder: (BuildContext context,
                                 AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -207,6 +212,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                                       print(result!.start);
                                       print(result.end);
+                                      setState(() {
+                                        dateRangeFilter = result;
+                                      });
                                     },
                                   ),
                                 ],
@@ -326,7 +334,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                           color: Colors.grey,
                                         ),
                                       ),
-                                      trailing: SizedBox(
+                                      trailing: const SizedBox(
                                         width: 75,
                                         child: Row(
                                           children: [
@@ -452,7 +460,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                           color: Colors.grey,
                                         ),
                                       ),
-                                      trailing: SizedBox(
+                                      trailing: const SizedBox(
                                         width: 75,
                                         child: Row(
                                           children: [
@@ -498,7 +506,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       'Member Status',
     ];
 
-    String cdate2 = DateFormat("MMMM, dd, yyyy").format(DateTime.now());
+    String cdate1 = DateFormat("MMMM, dd, yyyy").format(dateRangeFilter.start);
+    String cdate2 = DateFormat("MMMM, dd, yyyy").format(dateRangeFilter.end);
 
     List<List<String>> tableData = [];
     for (var i = 0; i < tableDataList.length; i++) {
@@ -511,6 +520,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
     pdf.addPage(
       pw.MultiPage(
+        crossAxisAlignment: pw.CrossAxisAlignment.center,
+        pageFormat: PdfPageFormat.letter,
         orientation: pw.PageOrientation.portrait,
         build: (context) => [
           pw.Align(
@@ -534,7 +545,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   style: const pw.TextStyle(
                     fontSize: 10,
                   ),
-                  cdate2,
+                  cdate1 == cdate2 ? cdate1 : '$cdate1 - $cdate2',
                 ),
               ],
             ),

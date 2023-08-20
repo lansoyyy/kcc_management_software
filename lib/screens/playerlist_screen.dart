@@ -13,7 +13,7 @@ import 'package:kcc_management_software/widgets/textfield_widget.dart';
 import 'package:kcc_management_software/widgets/toast_widget.dart';
 import 'package:printing/printing.dart';
 import 'dart:io' as io;
-
+import 'package:pdf/pdf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PlayerListScreen extends StatefulWidget {
@@ -1391,11 +1391,25 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
   }
 
   void generatePdf(List tableDataList) async {
-    final pdf = pw.Document();
-    final tableHeaders = [
-      'Member ID',
-      'Member Name',
-      'Member Status',
+    final pdf = pw.Document(
+      pageMode: PdfPageMode.fullscreen,
+    );
+    List<String> tableHeaders = [
+      'ID',
+      'Status',
+      'Name',
+      'Contact Number',
+      'Present Address',
+      'Permanent Address',
+      'Place of Birth',
+      'Date of Birth',
+      'Nationality',
+      'Source of Funds',
+      'Name of Work',
+      'Name of Employer',
+      'Nature of Work',
+      'TIN/SSS/GSIS Number',
+      'Name of Beneficiaries',
     ];
 
     String cdate2 = DateFormat("MMMM, dd, yyyy").format(DateTime.now());
@@ -1404,14 +1418,27 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
     for (var i = 0; i < tableDataList.length; i++) {
       tableData.add([
         tableDataList[i]['id'],
-        '${tableDataList[i]['firstName']} ${tableDataList[i]['middleInitial']}. ${tableDataList[i]['lastName']}',
         tableDataList[i]['isActive'] ? 'Active' : 'Inactive',
+        '${tableDataList[i]['firstName']} ${tableDataList[i]['middleInitial']}. ${tableDataList[i]['lastName']}',
+        tableDataList[i]['contactNumber'],
+        tableDataList[i]['presentAddress'],
+        tableDataList[i]['permanentAddress'],
+        tableDataList[i]['placeBirth'],
+        tableDataList[i]['brithdate'],
+        tableDataList[i]['nationality'],
+        tableDataList[i]['fundsSource'],
+        tableDataList[i]['work'],
+        tableDataList[i]['employeer'],
+        tableDataList[i]['nature'],
+        tableDataList[i]['number'],
+        tableDataList[i]['benNames'],
       ]);
     }
 
     pdf.addPage(
       pw.MultiPage(
-        orientation: pw.PageOrientation.portrait,
+        pageFormat: PdfPageFormat.a3,
+        orientation: pw.PageOrientation.landscape,
         build: (context) => [
           pw.Align(
             alignment: pw.Alignment.center,
