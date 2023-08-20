@@ -295,9 +295,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                               .where('id',
                                   isLessThan:
                                       '${toBeginningOfSentenceCase(nameSearched)}z')
-                              .orderBy('id', descending: false)
                               .where('isActive', isEqualTo: filter)
-                              .orderBy('dateTime', descending: false)
                               .snapshots(),
                           builder: (BuildContext context,
                               AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -317,6 +315,17 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             }
 
                             final data = snapshot.requireData;
+                            var sortedData =
+                                List<QueryDocumentSnapshot>.from(data.docs);
+
+                            // Sort the data by 'price' field
+                            sortedData.sort((a, b) {
+                              final Timestamp priceA = a['dateTime'];
+                              final Timestamp priceB = b['dateTime'];
+
+                              return priceA.compareTo(priceB);
+                            });
+
                             return SizedBox(
                               height: 350,
                               child: ListView.separated(
@@ -325,7 +334,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                       leading: IconButton(
                                         onPressed: () {
                                           addMemberDialog(
-                                              true, data.docs[index]);
+                                              true, sortedData[index]);
                                         },
                                         icon: const Icon(
                                           Icons.edit_outlined,
@@ -341,7 +350,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                             children: [
                                               TextRegular(
                                                 text:
-                                                    '${data.docs[index]['id']}',
+                                                    '${sortedData[index]['id']}',
                                                 fontSize: 18,
                                                 color: Colors.grey,
                                               ),
@@ -350,7 +359,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                               ),
                                               TextRegular(
                                                 text:
-                                                    '${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}',
+                                                    '${sortedData[index]['firstName']} ${sortedData[index]['middleInitial']}. ${sortedData[index]['lastName']}',
                                                 fontSize: 18,
                                                 color: Colors.grey,
                                               ),
@@ -369,17 +378,19 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                                   builder: (context) {
                                                     return AlertDialog(
                                                       title: TextBold(
-                                                          text: data.docs[index]
+                                                          text: sortedData[
+                                                                      index]
                                                                   ['isActive']
                                                               ? 'Flag user confirmation'
                                                               : 'Unflag user confirmation',
                                                           fontSize: 16,
                                                           color: Colors.black),
                                                       content: TextRegular(
-                                                          text: data.docs[index]
+                                                          text: sortedData[
+                                                                      index]
                                                                   ['isActive']
-                                                              ? 'Are you sure you want to flag ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}?'
-                                                              : 'Are you sure you want to unflag ${data.docs[index]['firstName']} ${data.docs[index]['middleInitial']}. ${data.docs[index]['lastName']}?',
+                                                              ? 'Are you sure you want to flag ${sortedData[index]['firstName']} ${sortedData[index]['middleInitial']}. ${sortedData[index]['lastName']}?'
+                                                              : 'Are you sure you want to unflag ${sortedData[index]['firstName']} ${sortedData[index]['middleInitial']}. ${sortedData[index]['lastName']}?',
                                                           fontSize: 14,
                                                           color: Colors.grey),
                                                       actions: [
@@ -396,15 +407,14 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                                         TextButton(
                                                             onPressed:
                                                                 () async {
-                                                              if (data.docs[
+                                                              if (sortedData[
                                                                       index][
                                                                   'isActive']) {
                                                                 await FirebaseFirestore
                                                                     .instance
                                                                     .collection(
                                                                         'Members')
-                                                                    .doc(data
-                                                                        .docs[
+                                                                    .doc(sortedData[
                                                                             index]
                                                                         .id)
                                                                     .update({
@@ -416,8 +426,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                                                     .instance
                                                                     .collection(
                                                                         'Members')
-                                                                    .doc(data
-                                                                        .docs[
+                                                                    .doc(sortedData[
                                                                             index]
                                                                         .id)
                                                                     .update({
@@ -442,7 +451,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                               },
                                               child: Icon(
                                                 Icons.circle,
-                                                color: data.docs[index]
+                                                color: sortedData[index]
                                                         ['isActive']
                                                     ? Colors.white
                                                     : Colors.red,
@@ -577,7 +586,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                       color: Colors.grey,
                                     );
                                   },
-                                  itemCount: data.docs.length),
+                                  itemCount: sortedData.length),
                             );
                           }),
                     ),
