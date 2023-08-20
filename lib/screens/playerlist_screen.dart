@@ -211,6 +211,16 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                               }
 
                               final data = snapshot.requireData;
+                              var sortedData =
+                                  List<QueryDocumentSnapshot>.from(data.docs);
+
+                              // Sort the data by 'price' field
+                              sortedData.sort((a, b) {
+                                final Timestamp priceA = a['dateTime'];
+                                final Timestamp priceB = b['dateTime'];
+
+                                return priceA.compareTo(priceB);
+                              });
                               return ButtonWidget(
                                 height: 40,
                                 radius: 10,
@@ -219,7 +229,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                 color: Colors.grey[300],
                                 label: 'EXPORT',
                                 onPressed: () {
-                                  generatePdf(data.docs);
+                                  generatePdf(sortedData);
                                 },
                               );
                             }),
