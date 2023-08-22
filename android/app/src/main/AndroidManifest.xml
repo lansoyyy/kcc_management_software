@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.kcc_management_software">
    <application
-        android:label="kcc_management_software"
+        android:label="KCC Management Software"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

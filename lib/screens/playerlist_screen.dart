@@ -767,38 +767,12 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                         fontSize: 10,
                                         color: Colors.grey[300],
                                         label: 'VIEW ID',
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                content: Container(
-                                                  height: 250,
-                                                  width: 250,
-                                                  decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                      image: NetworkImage(
-                                                        imgUrl2,
-                                                      ),
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  ),
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: TextBold(
-                                                      text: 'Close',
-                                                      fontSize: 14,
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
+                                        onPressed: () async {
+                                          try {
+                                            await launchUrl(Uri.parse(imgUrl));
+                                          } catch (e) {
+                                            print(e);
+                                          }
                                         },
                                       )
                                     : ButtonWidget(
@@ -1581,7 +1555,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                                   decoration: BoxDecoration(
                                                     image: DecorationImage(
                                                       image: NetworkImage(
-                                                        imgUrl2,
+                                                        imgUrl,
                                                       ),
                                                       fit: BoxFit.cover,
                                                     ),
