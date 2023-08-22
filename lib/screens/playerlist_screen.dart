@@ -1707,6 +1707,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                   Row(
                                     children: [
                                       TextFieldWidget(
+                                        isRequred: true,
                                           width: 150,
                                           height: 35,
                                           label: 'FIRST NAME',
@@ -1715,6 +1716,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                         width: 15,
                                       ),
                                       TextFieldWidget(
+                                          isRequred: true,
                                           isPassword: false,
                                           padding: 2.5,
                                           width: 50,
@@ -1727,6 +1729,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                     height: 10,
                                   ),
                                   TextFieldWidget(
+                                      isRequred: true,
                                       width: 217,
                                       height: 35,
                                       label: 'LAST NAME',
@@ -1996,6 +1999,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               TextFieldWidget(
+                                  isRequred: true,
                                   width: 175,
                                   height: 35,
                                   label: 'DATE OF BIRTH',
@@ -2004,6 +2008,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                 width: 15,
                               ),
                               TextFieldWidget(
+                                  isRequred: true,
                                   width: 175,
                                   height: 35,
                                   label: 'NATIONALITY',
@@ -2014,6 +2019,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             height: 10,
                           ),
                           TextFieldWidget(
+                              isRequred: true,
                               width: 365,
                               label: 'PLACE OF BIRTH',
                               controller: placebirthController),
@@ -2021,6 +2027,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             height: 10,
                           ),
                           TextFieldWidget(
+                              isRequred: true,
                               width: 365,
                               label: 'SOURCE OF FUNDS',
                               controller: fundsSourceController),
@@ -2028,6 +2035,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             height: 10,
                           ),
                           TextFieldWidget(
+                              isRequred: true,
                               width: 365,
                               height: 35,
                               label: 'PRESENT ADDRESS',
@@ -2036,6 +2044,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             height: 10,
                           ),
                           TextFieldWidget(
+                              isRequred: true,
                               width: 365,
                               height: 35,
                               label: 'PERMANENT ADDRESS',
@@ -2044,6 +2053,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             height: 10,
                           ),
                           TextFieldWidget(
+                              isRequred: true,
                               width: 365,
                               height: 35,
                               label: 'NAME OF WORK',
@@ -2052,6 +2062,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             height: 10,
                           ),
                           TextFieldWidget(
+                              isRequred: true,
                               width: 365,
                               height: 35,
                               label: 'NAME OF EMPLOYEER',
@@ -2060,6 +2071,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             height: 10,
                           ),
                           TextFieldWidget(
+                              isRequred: true,
                               width: 365,
                               height: 35,
                               label: 'NATURE OF WORK',
@@ -2068,6 +2080,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             height: 10,
                           ),
                           TextFieldWidget(
+                              isRequred: true,
                               width: 365,
                               height: 35,
                               label: 'CONTACT NUMBER',
@@ -2076,6 +2089,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             height: 10,
                           ),
                           TextFieldWidget(
+                              isRequred: true,
                               width: 365,
                               height: 35,
                               label: 'TIN, SSS NUMBER/GSIS NUMBER',
@@ -2084,6 +2098,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             height: 10,
                           ),
                           TextFieldWidget(
+                              isRequred: true,
                               width: 365,
                               height: 35,
                               label: 'NAMES OF BENEFICIARIES',
@@ -2227,8 +2242,6 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
     }
 
     if (errMsg != "") {
-      Navigator.pop(context);
-
       showToast(errMsg);
 
       return false;

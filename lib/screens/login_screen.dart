@@ -45,11 +45,15 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(
               height: 30,
             ),
-            TextFieldWidget(label: 'USERNAME', controller: usernameController),
+            TextFieldWidget(
+                isRequred: true,
+                label: 'USERNAME',
+                controller: usernameController),
             const SizedBox(
               height: 10,
             ),
             TextFieldWidget(
+                isRequred: true,
                 isObscure: true,
                 isPassword: true,
                 label: 'PASSWORD',
