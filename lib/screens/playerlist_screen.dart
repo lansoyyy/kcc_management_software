@@ -667,10 +667,6 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
   editMemberDialog(bool inEdit, data) {
     if (inEdit) {
       setState(() {
-        final placebirthController = TextEditingController();
-        final employeerController = TextEditingController();
-        final workController = TextEditingController();
-
         firstnameController.text = data['firstName'];
         lastnameController.text = data['lastName'];
         middlenameController.text = data['middleInitial'];
@@ -728,7 +724,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                imgUrl != '' || inEdit
+                                imgUrl != ''
                                     ? Container(
                                         height: 175,
                                         width: 150,
@@ -759,69 +755,49 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                inEdit
-                                    ? ButtonWidget(
-                                        height: 40,
-                                        radius: 10,
-                                        width: 125,
-                                        fontSize: 10,
-                                        color: Colors.grey[300],
-                                        label: 'VIEW ID',
-                                        onPressed: () async {
-                                          try {
-                                            await launchUrl(Uri.parse(imgUrl));
-                                          } catch (e) {
-                                            print(e);
-                                          }
-                                        },
-                                      )
-                                    : ButtonWidget(
-                                        height: 40,
-                                        radius: 10,
-                                        width: 125,
-                                        fontSize: 10,
-                                        color: Colors.grey[300],
-                                        label: 'UPLOAD',
-                                        onPressed: () {
-                                          InputElement input =
-                                              FileUploadInputElement()
-                                                  as InputElement
-                                                ..accept = 'image/*';
-                                          FirebaseStorage fs =
-                                              FirebaseStorage.instance;
-                                          input.click();
-                                          input.onChange.listen((event) {
-                                            final file = input.files!.first;
-                                            final reader = FileReader();
-                                            reader.readAsDataUrl(file);
-                                            reader.onLoadEnd
-                                                .listen((event) async {
-                                              var snapshot = await fs
-                                                  .ref()
-                                                  .child(
-                                                      DateTime.now().toString())
-                                                  .putBlob(file);
-                                              String downloadUrl =
-                                                  await snapshot.ref
-                                                      .getDownloadURL();
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                      content: TextRegular(
-                                                          text:
-                                                              'Photo Uploaded Succesfully!',
-                                                          fontSize: 14,
-                                                          color:
-                                                              Colors.white)));
-
-                                              setState(() {
-                                                imgUrl = downloadUrl;
-
-                                                isUploaded = true;
-                                              });
-                                            });
-                                          });
-                                        },
-                                      ),
+                                ButtonWidget(
+                                  height: 40,
+                                  radius: 10,
+                                  width: 125,
+                                  fontSize: 10,
+                                  color: Colors.grey[300],
+                                  label: 'UPLOAD',
+                                  onPressed: () {
+                                    InputElement input =
+                                        FileUploadInputElement() as InputElement
+                                          ..accept = 'image/*';
+                                    FirebaseStorage fs =
+                                        FirebaseStorage.instance;
+                                    input.click();
+                                    input.onChange.listen((event) {
+                                      final file = input.files!.first;
+                                      final reader = FileReader();
+                                      reader.readAsDataUrl(file);
+                                      reader.onLoadEnd.listen((event) async {
+                                        var snapshot = await fs
+                                            .ref()
+                                            .child(DateTime.now().toString())
+                                            .putBlob(file);
+                                        String downloadUrl =
+                                            await snapshot.ref.getDownloadURL();
+                                        await FirebaseFirestore.instance
+                                            .collection('Members')
+                                            .doc(data.id)
+                                            .update({
+                                          'photo': downloadUrl
+                                        }).then((value) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  content: TextRegular(
+                                                      text:
+                                                          'Photo Updated Succesfully!',
+                                                      fontSize: 14,
+                                                      color: Colors.white)));
+                                        });
+                                      });
+                                    });
+                                  },
+                                ),
                               ],
                             ),
                           ),
@@ -1707,7 +1683,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                   Row(
                                     children: [
                                       TextFieldWidget(
-                                        isRequred: true,
+                                          isRequred: true,
                                           width: 150,
                                           height: 35,
                                           label: 'FIRST NAME',
@@ -2234,11 +2210,8 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
       errMsg = "Beneficiary Name is required.";
     }
 
-    if (imgUrl == '') {
-      errMsg = "Member Photo is required.";
-    }
     if (imgUrl2 == '') {
-      errMsg = "ID Photo is required.";
+      errMsg = "ID File is required.";
     }
 
     if (errMsg != "") {
