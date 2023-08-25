@@ -690,6 +690,8 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
       });
     }
 
+    String newUrl = '';
+
     showDialog(
       context: context,
       builder: (context) {
@@ -780,20 +782,18 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                             .putBlob(file);
                                         String downloadUrl =
                                             await snapshot.ref.getDownloadURL();
-                                        await FirebaseFirestore.instance
-                                            .collection('Members')
-                                            .doc(data.id)
-                                            .update({
-                                          'photo': downloadUrl
-                                        }).then((value) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                                  content: TextRegular(
-                                                      text:
-                                                          'Photo Updated Succesfully!',
-                                                      fontSize: 14,
-                                                      color: Colors.white)));
-                                        });
+                                        setState(
+                                          () {
+                                            newUrl = downloadUrl;
+                                          },
+                                        );
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: TextRegular(
+                                                    text:
+                                                        'Photo Updated Succesfully!',
+                                                    fontSize: 14,
+                                                    color: Colors.white)));
                                       });
                                     });
                                   },
@@ -1368,7 +1368,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                                     'presentAddress': presentAddress.text,
                                     'permanentAddress': permanentAddress.text,
                                     'id': data.id,
-                                    'photo': imgUrl,
+                                    'photo': newUrl,
                                     'idPhoto': imgUrl2,
                                     'benNames': bennameController.text
                                   });
