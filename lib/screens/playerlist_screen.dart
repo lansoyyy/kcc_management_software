@@ -2210,10 +2210,6 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
       errMsg = "Beneficiary Name is required.";
     }
 
-    if (imgUrl2 == '') {
-      errMsg = "ID File is required.";
-    }
-
     if (errMsg != "") {
       showToast(errMsg);
 
