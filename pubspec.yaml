@@ -51,6 +51,8 @@ dependencies:
   open_file:
   printing: ^5.9.3
   url_launcher:
+  http:
+  image_downloader_web:
 
 dev_dependencies:
   flutter_test:

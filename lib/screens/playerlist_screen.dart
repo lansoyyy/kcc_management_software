@@ -1,4 +1,6 @@
 import 'dart:html';
+import 'dart:typed_data';
+import 'package:image_downloader_web/image_downloader_web.dart';
 import 'package:kcc_management_software/services/add_member.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -14,6 +16,7 @@ import 'package:kcc_management_software/widgets/toast_widget.dart';
 import 'package:printing/printing.dart';
 import 'dart:io' as io;
 import 'package:pdf/pdf.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class PlayerListScreen extends StatefulWidget {
@@ -139,7 +142,7 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                               },
                               decoration: const InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: 'Search ID of User',
+                                  hintText: 'Search Name or ID of User',
                                   hintStyle: TextStyle(
                                       fontFamily: 'QRegular', fontSize: 12),
                                   suffixIcon: Icon(
@@ -315,10 +318,10 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                       child: StreamBuilder<QuerySnapshot>(
                           stream: FirebaseFirestore.instance
                               .collection('Members')
-                              .where('id',
+                              .where('firstName',
                                   isGreaterThanOrEqualTo:
                                       toBeginningOfSentenceCase(nameSearched))
-                              .where('id',
+                              .where('firstName',
                                   isLessThan:
                                       '${toBeginningOfSentenceCase(nameSearched)}z')
                               .where('isActive', isEqualTo: filter)
@@ -727,21 +730,41 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 imgUrl != ''
-                                    ? Container(
-                                        height: 175,
-                                        width: 150,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                              image: NetworkImage(
-                                                imgUrl,
+                                    ? Stack(
+                                        children: [
+                                          Container(
+                                            height: 175,
+                                            width: 150,
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                  image: NetworkImage(
+                                                    imgUrl,
+                                                  ),
+                                                  fit: BoxFit.cover),
+                                              border: Border.all(
+                                                color: Colors.grey,
                                               ),
-                                              fit: BoxFit.cover),
-                                          border: Border.all(
-                                            color: Colors.grey,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
                                           ),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
+                                          Container(
+                                            decoration: const BoxDecoration(
+                                                color: Colors.white30,
+                                                shape: BoxShape.circle),
+                                            child: IconButton(
+                                              onPressed: () async {
+                                                await WebImageDownloader
+                                                    .downloadImageFromWeb(
+                                                        imgUrl);
+                                              },
+                                              icon: const Icon(
+                                                Icons.download,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       )
                                     : Container(
                                         height: 175,
