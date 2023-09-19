@@ -2,8 +2,6 @@ import 'dart:html';
 import 'dart:typed_data';
 import 'package:image_downloader_web/image_downloader_web.dart';
 import 'package:kcc_management_software/services/add_member.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pdf/widgets.dart' as pw;
 import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -13,11 +11,9 @@ import 'package:kcc_management_software/widgets/drawer_widget.dart';
 import 'package:kcc_management_software/widgets/text_widget.dart';
 import 'package:kcc_management_software/widgets/textfield_widget.dart';
 import 'package:kcc_management_software/widgets/toast_widget.dart';
-import 'package:printing/printing.dart';
-import 'dart:io' as io;
-import 'package:pdf/pdf.dart';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xcel;
+import 'dart:html' as html;
 
 class PlayerListScreen extends StatefulWidget {
   const PlayerListScreen({super.key});
@@ -27,6 +23,14 @@ class PlayerListScreen extends StatefulWidget {
 }
 
 class _PlayerListScreenState extends State<PlayerListScreen> {
+  @override
+  void dispose() {
+    workbook.dispose();
+    super.dispose();
+  }
+
+  final xcel.Workbook workbook = xcel.Workbook();
+
   String nameSearched = '';
   final searchController = TextEditingController();
   final firstnameController = TextEditingController();
@@ -2243,9 +2247,10 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
   }
 
   void generatePdf(List tableDataList) async {
-    final pdf = pw.Document(
-      pageMode: PdfPageMode.fullscreen,
-    );
+    final xcel.Worksheet sheet = workbook.worksheets[0];
+    // final pdf = pw.Document(
+    //   pageMode: PdfPageMode.fullscreen,
+    // );
     List<String> tableHeaders = [
       'ID',
       'Status',
@@ -2264,82 +2269,129 @@ class _PlayerListScreenState extends State<PlayerListScreen> {
       'Name of Beneficiaries',
     ];
 
-    String cdate2 = DateFormat("MMMM, dd, yyyy").format(DateTime.now());
-
-    List<List<String>> tableData = [];
-    for (var i = 0; i < tableDataList.length; i++) {
-      tableData.add([
-        tableDataList[i]['id'],
-        tableDataList[i]['isActive'] ? 'Active' : 'Inactive',
-        '${tableDataList[i]['firstName']} ${tableDataList[i]['middleInitial']}. ${tableDataList[i]['lastName']}',
-        tableDataList[i]['contactNumber'],
-        tableDataList[i]['presentAddress'],
-        tableDataList[i]['permanentAddress'],
-        tableDataList[i]['placeBirth'],
-        tableDataList[i]['brithdate'],
-        tableDataList[i]['nationality'],
-        tableDataList[i]['fundsSource'],
-        tableDataList[i]['work'],
-        tableDataList[i]['employeer'],
-        tableDataList[i]['nature'],
-        tableDataList[i]['number'],
-        tableDataList[i]['benNames'],
-      ]);
+    for (int i = 0; i < tableHeaders.length; i++) {
+      sheet.getRangeByIndex(1, i + 1).setText(tableHeaders[i]);
     }
 
-    pdf.addPage(
-      pw.MultiPage(
-        pageFormat: PdfPageFormat.a3,
-        orientation: pw.PageOrientation.landscape,
-        build: (context) => [
-          pw.Align(
-            alignment: pw.Alignment.center,
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.center,
-              children: [
-                pw.Text('KCC Membership Software',
-                    style: const pw.TextStyle(
-                      fontSize: 18,
-                    )),
-                pw.SizedBox(height: 10),
-                pw.Text(
-                  style: const pw.TextStyle(
-                    fontSize: 15,
-                  ),
-                  'Member List',
-                ),
-                pw.SizedBox(height: 5),
-                pw.Text(
-                  style: const pw.TextStyle(
-                    fontSize: 10,
-                  ),
-                  cdate2,
-                ),
-              ],
-            ),
-          ),
-          pw.SizedBox(height: 20),
-          pw.Table.fromTextArray(
-            headers: tableHeaders,
-            data: tableData,
-            headerDecoration: const pw.BoxDecoration(),
-            rowDecoration: const pw.BoxDecoration(),
-            headerHeight: 25,
-            cellHeight: 45,
-            cellAlignments: {
-              0: pw.Alignment.centerLeft,
-              1: pw.Alignment.center,
-            },
-          ),
-          pw.SizedBox(height: 20),
-        ],
-      ),
-    );
+    for (var i = 0; i < tableDataList.length; i++) {
+      sheet.getRangeByIndex(i + 2, 1).setText(tableDataList[i]['id']);
+      sheet
+          .getRangeByIndex(i + 2, 2)
+          .setText(tableDataList[i]['isActive'] ? 'Active' : 'Inactive');
+      sheet.getRangeByIndex(i + 2, 3).setText(
+          '${tableDataList[i]['firstName']} ${tableDataList[i]['middleInitial']}. ${tableDataList[i]['lastName']}');
+      sheet
+          .getRangeByIndex(i + 2, 4)
+          .setText(tableDataList[i]['contactNumber']);
+      sheet
+          .getRangeByIndex(i + 2, 5)
+          .setText(tableDataList[i]['presentAddress']);
+      sheet
+          .getRangeByIndex(i + 2, 6)
+          .setText(tableDataList[i]['permanentAddress']);
+      sheet.getRangeByIndex(i + 2, 7).setText(tableDataList[i]['placeBirth']);
+      sheet.getRangeByIndex(i + 2, 8).setText(tableDataList[i]['brithdate']);
+      sheet.getRangeByIndex(i + 2, 9).setText(tableDataList[i]['nationality']);
+      sheet.getRangeByIndex(i + 2, 10).setText(tableDataList[i]['fundsSource']);
+      sheet.getRangeByIndex(i + 2, 11).setText(tableDataList[i]['work']);
+      sheet.getRangeByIndex(i + 2, 12).setText(tableDataList[i]['employeer']);
+      sheet.getRangeByIndex(i + 2, 13).setText(tableDataList[i]['nature']);
+      sheet.getRangeByIndex(i + 2, 14).setText(tableDataList[i]['number']);
+      sheet.getRangeByIndex(i + 2, 15).setText(tableDataList[i]['benNames']);
+    }
 
-    await Printing.layoutPdf(onLayout: (format) async => pdf.save());
+    final List<int> bytes = workbook.saveAsStream();
 
-    final output = await getTemporaryDirectory();
-    final file = io.File("${output.path}/payroll_report.pdf");
-    await file.writeAsBytes(await pdf.save());
+    workbook.saveAsCSV(',');
+
+    final blob = html.Blob([Uint8List.fromList(bytes)],
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement(href: url)
+      ..target = 'webbrowser'
+      ..download = 'kcc-playerslist'
+      ..style.display = 'none'
+      ..click();
+
+    // Clean up the URL created
+    html.Url.revokeObjectUrl(url);
+
+    // String cdate2 = DateFormat("MMMM, dd, yyyy").format(DateTime.now());
+
+    // List<List<String>> tableData = [];
+    // for (var i = 0; i < tableDataList.length; i++) {
+    //   tableData.add([
+    //     tableDataList[i]['id'],
+    //     tableDataList[i]['isActive'] ? 'Active' : 'Inactive',
+    //     '${tableDataList[i]['firstName']} ${tableDataList[i]['middleInitial']}. ${tableDataList[i]['lastName']}',
+    //     tableDataList[i]['contactNumber'],
+    //     tableDataList[i]['presentAddress'],
+    //     tableDataList[i]['permanentAddress'],
+    //     tableDataList[i]['placeBirth'],
+    //     tableDataList[i]['brithdate'],
+    //     tableDataList[i]['nationality'],
+    //     tableDataList[i]['fundsSource'],
+    //     tableDataList[i]['work'],
+    //     tableDataList[i]['employeer'],
+    //     tableDataList[i]['nature'],
+    //     tableDataList[i]['number'],
+    //     tableDataList[i]['benNames'],
+    //   ]);
+    // }
+
+    // pdf.addPage(
+    //   pw.MultiPage(
+    //     pageFormat: PdfPageFormat.a3,
+    //     orientation: pw.PageOrientation.landscape,
+    //     build: (context) => [
+    //       pw.Align(
+    //         alignment: pw.Alignment.center,
+    //         child: pw.Column(
+    //           crossAxisAlignment: pw.CrossAxisAlignment.center,
+    //           children: [
+    //             pw.Text('KCC Membership Software',
+    //                 style: const pw.TextStyle(
+    //                   fontSize: 18,
+    //                 )),
+    //             pw.SizedBox(height: 10),
+    //             pw.Text(
+    //               style: const pw.TextStyle(
+    //                 fontSize: 15,
+    //               ),
+    //               'Member List',
+    //             ),
+    //             pw.SizedBox(height: 5),
+    //             pw.Text(
+    //               style: const pw.TextStyle(
+    //                 fontSize: 10,
+    //               ),
+    //               cdate2,
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //       pw.SizedBox(height: 20),
+    //       pw.Table.fromTextArray(
+    //         headers: tableHeaders,
+    //         data: tableData,
+    //         headerDecoration: const pw.BoxDecoration(),
+    //         rowDecoration: const pw.BoxDecoration(),
+    //         headerHeight: 25,
+    //         cellHeight: 45,
+    //         cellAlignments: {
+    //           0: pw.Alignment.centerLeft,
+    //           1: pw.Alignment.center,
+    //         },
+    //       ),
+    //       pw.SizedBox(height: 20),
+    //     ],
+    //   ),
+    // );
+
+    // await Printing.layoutPdf(onLayout: (format) async => pdf.save());
+
+    // final output = await getTemporaryDirectory();
+    // final file = io.File("${output.path}/payroll_report.pdf");
+    // await file.writeAsBytes(await pdf.save());
   }
 }
